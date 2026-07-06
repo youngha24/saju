@@ -278,8 +278,8 @@ body{padding-bottom:92px}
 <div id="lockScr" style="display:none;position:fixed;inset:0;z-index:99999;background:var(--bg,#f7f3e9);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center">
   <div style="font-size:34px">🔒</div>
   <div style="font-size:18px;font-weight:700">사주 ✦ 운세</div>
-  <div style="font-size:13px;color:var(--sub,#8a7f6a)">처음 설치 시 한 번만 — 전달받은 <b>숫자 암호 11자리</b>를 입력하세요</div>
-  <input id="lockIn" inputmode="numeric" pattern="[0-9]*" maxlength="11" placeholder="●●●●●●●●●●●" style="font-size:22px;letter-spacing:4px;text-align:center;width:min(320px,86vw);padding:12px;border:1.5px solid var(--line,#d8cfba);border-radius:12px;background:#fff" autocomplete="off">
+  <div style="font-size:13px;color:var(--sub,#8a7f6a)">처음 설치 시 한 번만 — 전달받은 <b>숫자 암호 10자리</b>를 입력하세요</div>
+  <input id="lockIn" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="●●●●●●●●●●" style="font-size:22px;letter-spacing:4px;text-align:center;width:min(320px,86vw);padding:12px;border:1.5px solid var(--line,#d8cfba);border-radius:12px;background:#fff" autocomplete="off">
   <button onclick="lockTry()" style="width:min(320px,86vw)">잠금 해제</button>
   <div id="lockMsg" style="font-size:13px;color:var(--red,#b3412f);min-height:18px"></div>
 </div>
@@ -3014,13 +3014,13 @@ function nameReadPro(){
   el("nrResult").style.display="block";
 }
 /* ============ 설치 잠금 (11자리 · 해시 검증 — 원문 코드는 파일에 없음) ============ */
-var LK_SALT="5zh5yyiu", LK_HASH="fkfrhy.1flscr1", lkWait=0; // 암호 변경 시: 새 코드로 lkH(salt+code) 재계산해 교체 (보고서 r12 참조)
+var LK_SALT="5zh5yyiu", LK_HASH="1kx3w3l.1apfv82", LK_LEN=10, lkWait=0; // 암호 변경 시: 새 코드로 lkH(salt+code) 재계산해 교체 (보고서 r12 참조)
 function lkH(s){ var a=5381,b=0; for(var i=0;i<s.length;i++){ a=((a<<5)+a+s.charCodeAt(i))>>>0; b=(s.charCodeAt(i)+(b<<6)+(b<<16)-b)>>>0; } return a.toString(36)+"."+b.toString(36); }
 function lockShow(){ var l=el("lockScr"); if(!l) return; l.style.display="flex"; try{ el("lockIn").focus(); }catch(e){} }
 function lockTry(){
   if(lkWait>Date.now()){ el("lockMsg").textContent="잠시 후 다시 시도하세요."; return; }
   var v=(el("lockIn").value||"").replace(/\D/g,"");
-  if(v.length!==11){ el("lockMsg").textContent="숫자 11자리를 입력하세요 ("+v.length+"/11)"; return; }
+  if(v.length!==LK_LEN){ el("lockMsg").textContent="숫자 "+LK_LEN+"자리를 입력하세요 ("+v.length+"/"+LK_LEN+")"; return; }
   if(lkH(LK_SALT+v)===LK_HASH){ try{ localStorage.setItem("sajuLockOK","1"); }catch(e){} el("lockScr").style.display="none"; }
   else{ lkWait=Date.now()+1500; el("lockIn").value=""; el("lockMsg").textContent="암호가 맞지 않습니다."; }
 }
