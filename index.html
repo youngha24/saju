@@ -415,8 +415,10 @@ body{padding-bottom:92px}
     <p class="note" style="margin-top:0">원리 — 주역점의 정밀판입니다. 동전으로 세운 괘의 여섯 효마다 십이지(납갑)를 붙이고, 나(世)와 상대(應), 그리고 여섯 육친(부모=문서, 처재=재물, 관귀=직장·병, 자손=복덕, 형제=경쟁)을 가려서 물은 일이 언제 어떻게 움직이는지 봅니다.</p>
     <label>질문 (선택)</label>
     <input id="yhQ" placeholder="예: 이번 계약, 성사되겠습니까?">
-    <button id="yhBtn" onclick="yookhyo()">동전 여섯 번 던져 괘 세우기</button>
+    <button id="yhBtn" onclick="yookhyo()">동전 던지기 (1 / 6)</button>
     <button onclick="yhReset()" style="background:transparent;color:var(--sub);border:1px solid var(--line)">새로 묻기</button>
+    <p id="yhCoins" class="note" style="margin:6px 0"></p>
+    <div class="hexwrap" id="yhLive"></div>
     <div id="yhResult" style="display:none">
       <div class="hexwrap" id="yhHex"></div>
       <div id="yhTable"></div>
@@ -604,6 +606,7 @@ body{padding-bottom:92px}
   </div>
   <p class="note" style="margin-top:4px">※ 성·돌림자·항렬자는 모두 한자로 입력합니다 (예: 성 金, 돌림자 鉉). 족보의 항렬자 한자를 입력하면 자원오행으로 정통 판정합니다. 한자를 모르면 비워 두세요. 총획수는 사주·성씨·항렬자를 보고 자동으로 추천해 드립니다.</p>
   <button onclick="makeName()">작명 추천 받기</button>
+  <div id="mkNotice" style="display:none;margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:8px;line-height:1.55"></div>
   <div id="mkResult" style="display:none">
     <div id="mkPages"></div>
     <div id="mkLegacy" style="display:none">
@@ -1875,6 +1878,19 @@ var SURNAME_EXT=[["劉","유",15],["兪","유",9],["庾","유",12],["盧","노",
 ["龍","용",16],["太","태",4],["彭","팽",12],["曺","조",10],["皮","피",5],["甘","감",5],["田","전",5],["慶","경",15],
 ["宮","궁",10],["皇","황",9],["甫","보",7],["諸","제",16],["葛","갈",15],["史","사",5]];
 SURNAME_EXT.forEach(function(x){ SURNAME_BYHJ[x[0]]=[x[1],x[2]]; });
+/* 성씨 한글→한자 역변환 (한자 입력이 어려운 사용자용) — SURNAME_HJ 대표 우선, SURNAME_EXT 동음이성 보조 */
+var SURNAME_KO=(function(){ var m={};
+  SURNAME_EXT.forEach(function(x){ (m[x[1]]=m[x[1]]||[]).push(x[0]); });
+  for(var k in SURNAME_HJ){ var hj=SURNAME_HJ[k][0], arr=m[k]||[];
+    m[k]=[hj].concat(arr.filter(function(c){return c!==hj;})); }
+  return m; })();
+function koSurToHj(ko){ var chars=ko.split(""), hj="", alt=[];
+  for(var i=0;i<chars.length;i++){ var cands=SURNAME_KO[chars[i]]; if(!cands||!cands.length) return null;
+    hj+=cands[0]; if(cands.length>1) alt=alt.concat(cands.slice(1)); }
+  return {hj:hj, alt:alt}; }
+function mkNote(msg, homeBtn){ var n=el("mkNotice"); if(!n) return;
+  n.innerHTML = msg ? (msg + (homeBtn?' <button onclick="showTab(\'home\')" style="margin-left:6px;padding:4px 10px">홈으로 가서 생년월일 입력</button>':'')) : "";
+  n.style.display = msg ? "block" : "none"; }
 /* 인명용 한자 사전: 글자→[성별, [[한자,원획,자원오행(0목1화2토3금4수),뜻],...]] · 불용한자 제외 선별 */
 var HJDB={
 "준":["M",[["埈",10,2,"높을 준"],["晙",10,1,"밝을 준"],["準",14,4,"법도 준"]]],
@@ -2025,24 +2041,30 @@ function suCheck(ss,m1,m2){ // 4격 계산 공통
 }
 function genderOK(g,tag){ return g==="B"||tag==="B"||tag===g; }
 function makeName(){
-  if(!cur){ alert("작명 대상자(아기)의 사주를 위에서 먼저 조회해 주세요. 정통 작명은 사주 용신에서 출발합니다."); return; }
+  mkNote("");
+  if(!cur){ mkNote("먼저 <b>홈</b> 화면에서 아기(또는 개명 대상자)의 <b>생년월일·시</b>를 입력해 주세요. 정통 작명은 사주 용신에서 출발합니다.", true); return; }
   var sIn=el("mkS").value.trim(), g=el("mkG").value;
   if(sIn&&sIn.normalize) sIn=sIn.normalize("NFKC"); // 한컴·MS 입력기 호환한자(李U+F9E1 등) 정규화
-  if(!sIn){ alert("성을 한자로 입력해 주세요 (예: 金, 李)."); return; }
-  if(sIn.split("").some(function(c){return !!decomp(c);})){ alert("성은 한글이 아닌 한자로 입력해 주세요 (예: 김→金, 이→李)."); return; }
+  if(!sIn){ mkNote("성을 입력해 주세요. <b>한글(예: 김·이·박)</b>로 넣으시면 한자로 자동 변환해 드립니다."); return; }
+  if(sIn.split("").some(function(c){return !!decomp(c);})){ // 한글 성 → 한자 자동 변환
+    var conv=koSurToHj(sIn);
+    if(!conv){ mkNote("'"+sIn+"'은(는) 내장 성씨 사전에 없는 성입니다. 한자로 입력하거나 다른 표기로 시도해 주세요."); return; }
+    mkNote("한글 성 '"+sIn+"' → <b>"+conv.hj+"</b> 로 변환했습니다."+(conv.alt.length?" 다른 한자라면("+conv.alt.join("·")+") 한자로 직접 입력해 주세요.":""));
+    sIn=conv.hj;
+  }
   var s="", ssH=0, shj=sIn, surBad=null; // s=한글음(발음오행·표시용), ssH=강희자전 원획 합
   sIn.split("").forEach(function(c){ var r=SURNAME_BYHJ[c]; if(!r) surBad=c; else { s+=r[0]; ssH+=r[1]; } });
-  if(surBad){ alert("성씨 한자 '"+surBad+"'는 내장 성씨 사전("+Object.keys(SURNAME_BYHJ).length+"성)에 없습니다.\n지원: "+Object.keys(SURNAME_BYHJ).join(" ")+"\n(사전은 계속 확장됩니다)"); return; }
+  if(surBad){ mkNote("성씨 '"+surBad+"'는 내장 성씨 사전("+Object.keys(SURNAME_BYHJ).length+"성)에 없습니다. 한글로 입력해 보시거나 다른 한자로 시도해 주세요."); return; }
   // 돌림자: 족보의 한자로 입력. 인명사전(HJDB) 등재 → 획수·오행 정밀 계산, 항렬사전(HANJA_EL)만 등재 → 오행 판정만
   var dolIn=el("mkDol").value.trim(), dolPos=+el("mkDolPos").value;
   if(dolIn&&dolIn.normalize) dolIn=dolIn.normalize("NFKC");
   var dol="", dolE=null, dolElOnly=-1; // dol=한글음, dolE=[한자,원획,오행,뜻]
   if(dolIn){
-    if(decomp(dolIn)){ alert("돌림자는 족보의 한자로 입력해 주세요 (예: 현→鉉)."); return; }
+    if(decomp(dolIn)){ mkNote("돌림자(항렬자)는 족보에 정해진 <b>한자</b>여야 해서 자동 변환이 어렵습니다. 돌림자를 안 쓰시려면 비워 두세요. (예: 현→鉉)"); return; }
     var dr=hjLookup(dolIn);
     if(dr){ dol=dr.key; dolE=dr.e; }
     else if(hanjaEl(dolIn)>=0){ dolElOnly=hanjaEl(dolIn); }
-    else { alert("돌림자 한자 '"+dolIn+"'는 확장 사전(2만7천 자)에도 없습니다 — 이체자(다른 표기)로 시도해 주세요."); return; }
+    else { mkNote("돌림자 한자 '"+dolIn+"'는 확장 사전(2만7천 자)에도 없습니다 — 이체자(다른 표기)로 시도하거나 비워 두세요."); return; }
   }
   var fa=el("mkF").value.trim();
   if(fa&&fa.normalize) fa=fa.normalize("NFKC");
@@ -2819,11 +2841,26 @@ function yhPalace(bits6){ // 팔궁 소속·세효 산출
   }
   return null;
 }
+var yhLines=[];
 function yookhyo(){
-  var lines=[], bits=[];
-  for(var i=0;i<6;i++){ var b=0; for(var j2=0;j2<3;j2++){ if(Math.random()<0.5)b++; }
-    lines.push(b===0?9:b===3?6:b===1?7:8); } // 앞면 0=노양9 · 3=노음6 · 1=소양7 · 2=소음8 (척전법)
-  bits=lines.map(function(v){ return v%2; }); // 7,9=양(1) 6,8=음(0)
+  if(yhLines.length>=6) return; // 6효가 서면 정지 (재점은 '새로 묻기')
+  var c=[Math.random()<0.5?1:0, Math.random()<0.5?1:0, Math.random()<0.5?1:0]; // 1=앞면(heads)
+  var b=c[0]+c[1]+c[2];
+  var v=(b===0?9:b===3?6:b===1?7:8); // 앞면 0=노양9 · 3=노음6 · 1=소양7 · 2=소음8 (척전법)
+  yhLines.push(v);
+  var nm={6:"노음 ⚋ (동효!)",7:"소양 ⚊",8:"소음 ⚋",9:"노양 ⚊ (동효!)"}[v];
+  if(el("yhCoins")) el("yhCoins").textContent=c.map(function(x){return x?"앞":"뒤";}).join(" · ")+" → "+yhLines.length+"효: "+nm;
+  // 진행 중 라이브 괘 (아래 초효부터 쌓임, 미완성 효는 흐리게)
+  if(el("yhLive")){
+    el("yhLive").innerHTML=drawHex(yhLines.concat([8,8,8,8,8,8]).slice(0,6),false,yhLines.length+" / 6 효","아래 초효부터 쌓입니다");
+    var rows0=el("yhLive").querySelectorAll(".hline");
+    for(var i2=0;i2<6-yhLines.length;i2++){ if(rows0[i2]) rows0[i2].style.opacity=.15; }
+  }
+  var yb=el("yhBtn"); if(yb) yb.textContent="동전 던지기 ("+Math.min(yhLines.length+1,6)+" / 6)";
+  if(yhLines.length===6) yhStand(yhLines.slice()); // 6효 완성 → 괘 세우기
+}
+function yhStand(lines){
+  var bits=lines.map(function(v){ return v%2; }); // 7,9=양(1) 6,8=음(0)
   var bon=hexOf(lines), db=HEXDATA[bon.no];
   var pal=yhPalace(bits);
   var naj=YH_NAJIA[yhTri(bits.slice(0,3))][0].concat(YH_NAJIA[yhTri(bits.slice(3,6))][1]);
@@ -2845,10 +2882,12 @@ function yookhyo(){
     +(movs.length?" 변하여 <b>"+dj[0]+"</b>로 갑니다 — "+dj[5]:"")
     +"<br><br><b>世(세)</b>는 나, <b>應(응)</b>은 상대·환경입니다. 물으신 일이 위 육친 중 어디에 해당하는지 보고, 그 효가 동했으면 그 사안이 곧 움직인다는 뜻으로 읽습니다.";
   el("yhResult").style.display="block";
-  var yb=el("yhBtn"); if(yb){ yb.disabled=true; yb.textContent="괘가 섰습니다 — 아래 풀이를 보세요"; } // 6효가 서면 던지기 종료 (재점은 '새로 묻기')
+  if(el("yhLive")) el("yhLive").innerHTML=""; if(el("yhCoins")) el("yhCoins").textContent="";
+  var yb=el("yhBtn"); if(yb){ yb.disabled=true; yb.textContent="괘가 섰습니다 — 아래 풀이를 보세요"; }
 }
-function yhReset(){ var yb=el("yhBtn"); if(yb){ yb.disabled=false; yb.textContent="동전 여섯 번 던져 괘 세우기"; }
-  if(el("yhResult")) el("yhResult").style.display="none"; }
+function yhReset(){ yhLines=[]; var yb=el("yhBtn"); if(yb){ yb.disabled=false; yb.textContent="동전 던지기 (1 / 6)"; }
+  if(el("yhResult")) el("yhResult").style.display="none";
+  if(el("yhLive")) el("yhLive").innerHTML=""; if(el("yhCoins")) el("yhCoins").textContent=""; }
 /* ============ 하락이수 (河洛理數) — 원전 작괘법 ============ */
 var HR_GANSU=[6,2,8,7,1,9,3,4,6,2], HR_JISU=[1,10,3,8,5,2,7,10,4,9,5,6];
 var HR_DIGIT={1:2,2:0,3:1,4:6,6:7,7:3,8:4,9:5}; // 수→괘(트라이그램 비트): 1감2곤3진4손6건7태8간9리
@@ -3048,6 +3087,104 @@ function lockTry(){
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
   navigator.serviceWorker.register("./sw.js").catch(function(){});
 }
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   헤르메스 자가학습 모듈 v1.0 — 2026-07-09 클로드
+   4부품: ①익명 예측원장 ②승격 게이트 ③절대규칙 가드 ④강제 후크(로드 시 enforce)
+   무저장 원칙 준수: 모든 데이터는 이 기기(localStorage)에만 저장.
+   이름·생년월일 원문 저장 금지 — 익명 해시만 기록.
+   엔진 불변: calcSaju·daewoon 등 계산식은 절대 건드리지 않고 표시층만 학습.
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+"use strict";
+var KEY="sajuSelfLearn_v1";
+var PROTECTED=["calcSaju","daewoon","dayGZ","yearMonthPillar","jeolJD","sipsin","timeCorr","su81"];
+var KINDS={saju:"사주풀이",period:"큰흐름",today:"오늘운세",tarot:"타로",ziwei:"자미두수",harak:"하락이수",yookhyo:"육효",tojeong:"토정비결",name:"작명"};
+var LIM={ledger:400,audit:120,wMin:0.6,wMax:1.6,gateN:8,drop:0.05};
+var refs={},ST;
+function now(){return new Date().toISOString().slice(0,19).replace("T"," ");}
+function load(){try{var s=localStorage.getItem(KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){}}
+function blank(){return {v:1,created:now(),ledger:[],weights:{},meta:{applied:null,avg:null,n:0},audit:[],asked:{},disabled:false};}
+ST=load()||blank();
+function audit(t,m){ST.audit.push([now(),t,m]);if(ST.audit.length>LIM.audit)ST.audit=ST.audit.slice(-LIM.audit);save();}
+/* ── ③ 절대규칙 가드: 엔진 함수 교체 감지 시 학습 전면 중지 ── */
+function guardInit(){PROTECTED.forEach(function(n){if(typeof window[n]==="function")refs[n]=window[n];});}
+function guardOK(){var bad=PROTECTED.filter(function(n){return refs[n]&&window[n]!==refs[n];});
+ if(bad.length){if(!ST.disabled){ST.disabled=true;audit("GUARD_VIOLATION","엔진 함수 교체 감지("+bad.join(",")+") — 학습 중지");}return false;}
+ return true;}
+/* ── ① 익명 원장 (개인정보 원문 저장 금지 — 해시만) ── */
+function subjHash(){try{var s=["inY","inM","inD","inH","inGender"].map(function(i){var e=document.getElementById(i);return e?e.value:"";}).join("-");
+ var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h.toString(36);}catch(e){return "na";}}
+function logView(k){if(ST.disabled)return;var L=ST.ledger,last=L[L.length-1];
+ if(last&&last.k===k&&last.fb===null&&last.t.slice(0,13)===now().slice(0,13)){last.t=now();save();return;}
+ L.push({t:now(),k:k,s:subjHash(),fb:null});
+ if(L.length>LIM.ledger)ST.ledger=L.slice(-LIM.ledger);
+ save();askFb(k);}
+function logFb(k,v){if(ST.disabled)return;
+ for(var i=ST.ledger.length-1;i>=0;i--){var e=ST.ledger[i];if(e.k===k&&e.fb===null){e.fb=v;break;}}
+ audit("FEEDBACK",k+"="+v);save();cycle();hideFb("감사합니다. 이 기기 안에서만 학습에 반영됩니다.");}
+function stats(){var m={};ST.ledger.forEach(function(e){if(e.fb===null||e.fb===undefined)return;
+ var o=m[e.k]||(m[e.k]={n:0,sum:0});o.n++;o.sum+=e.fb;});return m;}
+/* ── ② 승격 게이트: 표본 부족이면 보류, 만족도 하락이면 기존 유지(롤백) ── */
+function cycle(){if(ST.disabled||!guardOK())return "disabled";
+ var m=stats(),ks=Object.keys(m);if(!ks.length)return "empty";
+ var cand={},tot=0,tn=0,ready=true;
+ ks.forEach(function(k){var s=m[k],sat=s.sum/s.n;tot+=s.sum;tn+=s.n;
+  if(s.n<LIM.gateN)ready=false;
+  var w=Math.round((1+sat*0.5)*100)/100;
+  cand[k]=Math.min(LIM.wMax,Math.max(LIM.wMin,w));});
+ var avg=tn?tot/tn:0;
+ if(!ready){audit("GATE_HOLD","표본 부족 — 섹션당 "+LIM.gateN+"건 필요, 가중치 변경 보류");return "hold";}
+ if(ST.meta.avg!==null&&avg<ST.meta.avg-LIM.drop){audit("GATE_REJECT","만족도 하락("+avg.toFixed(2)+"<"+ST.meta.avg.toFixed(2)+") — 기존 가중치 유지");return "reject";}
+ ST.weights=cand;ST.meta={applied:now(),avg:Math.round(avg*100)/100,n:tn};
+ audit("PROMOTED","가중치 승격 avg="+avg.toFixed(2)+" n="+tn);save();paint();return "promoted";}
+/* ── 가중치 효과(표시층 전용): 점술 탭 상단 '내 기기 학습' 안내 ── */
+function paint(){try{var pg=document.getElementById("pg-jum");if(!pg)return;
+ var ks=Object.keys(ST.weights);if(!ks.length)return;
+ var best=ks.sort(function(a,b){return ST.weights[b]-ST.weights[a];})[0];
+ var m=stats(),s=m[best];if(!s)return;
+ var pct=Math.round((s.sum/s.n+1)/2*100);
+ var d=document.getElementById("sslInfo");
+ if(!d){d=document.createElement("div");d.id="sslInfo";
+  d.style.cssText="margin:6px 10px;padding:8px 10px;border-radius:8px;background:#f3eee1;color:#4a4132;font-size:12.5px;line-height:1.5;";
+  pg.insertBefore(d,pg.firstChild);}
+ d.textContent="📈 내 기기 학습: 지금까지 「"+(KINDS[best]||best)+"」 풀이 만족도가 가장 높아요("+pct+"%, 표본 "+s.n+"건). 피드백이 쌓일수록 더 정확해집니다.";}catch(e){}}
+/* ── 피드백 UI — 풀이 종류당 하루 1회만 질문 ── */
+function askFb(k){try{if(!document.body)return;
+ var day=now().slice(0,10);if(ST.asked[k]===day)return;ST.asked[k]=day;save();
+ var bar=document.getElementById("sslFb");
+ if(!bar){bar=document.createElement("div");bar.id="sslFb";
+  bar.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:70px;z-index:9999;background:#fffdf6;border:1px solid #cbbfa3;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.18);padding:9px 12px;font-size:13px;color:#3d3629;display:none;max-width:92vw;";
+  document.body.appendChild(bar);}
+ bar.innerHTML="";
+ var q=document.createElement("span");q.textContent="「"+(KINDS[k]||k)+"」 풀이, 잘 맞았나요? ";bar.appendChild(q);
+ [["맞아요",1],["보통",0],["아니요",-1]].forEach(function(o){
+  var b=document.createElement("button");b.textContent=o[0];
+  b.style.cssText="margin-left:6px;padding:4px 9px;border:1px solid #b9ad90;border-radius:8px;background:#f3eee1;font-size:12.5px;";
+  b.onclick=function(){logFb(k,o[1]);};bar.appendChild(b);});
+ var x=document.createElement("button");x.textContent="✕";
+ x.style.cssText="margin-left:8px;border:none;background:none;font-size:13px;color:#8d8471;";
+ x.onclick=function(){hideFb();};bar.appendChild(x);
+ bar.style.display="block";}catch(e){}}
+function hideFb(msg){try{var bar=document.getElementById("sslFb");if(!bar)return;
+ if(msg){bar.textContent=msg;setTimeout(function(){bar.style.display="none";},1800);}
+ else bar.style.display="none";}catch(e){}}
+/* ── ④ 강제 후크: 표시 함수 래핑(원본은 __ssl_*에 보존) + 로드 시 enforce ── */
+var HOOKS={run:"saju",periodLuck:"period",todayLuck:"today",drawTarot:"tarot",ziweiBoard:"ziwei",harak:"harak",yookhyo:"yookhyo",tojeong:"tojeong",makeName:"name"};
+function hook(){Object.keys(HOOKS).forEach(function(fn){
+ var f=window[fn];if(typeof f!=="function"||window["__ssl_"+fn])return;
+ window["__ssl_"+fn]=f;
+ window[fn]=function(){var r=f.apply(this,arguments);try{logView(HOOKS[fn]);}catch(e){}return r;};});}
+function enforce(){guardInit();hook();var g=guardOK();
+ audit("ENFORCE","시작 점검 — 가드 "+(g?"정상":"위반")+", 원장 "+ST.ledger.length+"건");
+ var r=cycle();paint();return {guard:g,cycle:r,ledger:ST.ledger.length};}
+window.SajuSelfLearn={enforce:enforce,cycle:cycle,logFb:logFb,logView:logView,stats:stats,
+ state:function(){return ST;},reset:function(){ST=blank();save();return ST;},guardOK:guardOK,KEY:KEY,LIM:LIM};
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){try{enforce();}catch(e){}});
+else try{enforce();}catch(e){}
+})();
 </script>
 </body>
 </html>
