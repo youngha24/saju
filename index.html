@@ -356,6 +356,7 @@ body{padding-bottom:92px}
     <div class="sec"><h3>재물운</h3><p id="tMoney"></p></div>
     <div class="sec"><h3>애정·대인운</h3><p id="tLove"></p></div>
     <div class="sec"><h3>건강운</h3><p id="tHealth"></p></div>
+    <div class="sec"><h3>💡 오늘의 조언</h3><p id="tAdvice"></p></div>
     <div class="lucky">
       <div>행운의 색<b id="lColor"></b></div>
       <div>행운의 숫자<b id="lNum"></b></div>
@@ -363,7 +364,9 @@ body{padding-bottom:92px}
     </div>
   </div>
 </div>
-<div class="card fold">
+  <div class="card" id="cardBio"><h2>📈 바이오리듬 (오늘의 컨디션)</h2><p class="note">생년월일 기준 신체·감성·지성 주기입니다.</p><button onclick="bioRhythm()">바이오리듬 보기</button><div id="brResult" style="display:none"></div></div>
+  
+  <div class="card fold">
   <h2>월간 · 주간 운세</h2>
   <p class="note" style="margin-top:0">이번 달 월건과 이번 주 7일의 일진을 내 사주와 대조합니다.</p>
   <button onclick="monthWeek()">이번 달·이번 주 운세 보기</button>
@@ -581,8 +584,117 @@ body{padding-bottom:92px}
   <p class="note" style="margin-top:0">이 앱의 기준 엔진(대운 지지 중심 v2.1 — 실제 인생 궤적으로 검증)으로 10년 단위 평생 흐름을 풀이합니다.</p>
   <button onclick="periodLuck()">나의 평생 흐름 보기</button>
   <div id="pdResult" style="display:none"><div id="pdTable"></div></div>
+
 </div>
 
+  <div class="pgnav"><button class="btn2" onclick="tabMove(-1)">◀ 이전 화면</button><button class="btn2" onclick="tabMove(1)">다음 화면 ▶</button></div>
+</div>
+
+<div class="tpage" id="pg-gh">
+  <div class="card">
+    <h2>💞 궁합</h2>
+    <p class="note" style="margin-top:0">나(홈에서 입력한 사주)와 상대의 생년월일시로 두 사람의 궁합을 사주 명리로 풀이합니다. 일지(애정)·띠(생활 리듬)·일간(성향)·오행·용신 다섯 자리를 함께 봅니다.</p>
+    <p style="margin-top:10px;padding:12px 14px;background:#E9EEF4;border:1px solid #CBD9E7;border-radius:13px;font-size:13.5px;line-height:1.75">🔒 <b>개인정보 무저장</b> — 두 사람의 생년월일은 이 기기 안에서만 계산되고, 저장·전송되지 않습니다. 화면을 닫으면 사라집니다.</p>
+  </div>
+  <div class="card" id="ghNeed" style="display:none">
+    <p class="note" style="margin-top:0">먼저 홈 화면 오른쪽 👤 에서 <b>나의 생년월일시</b>를 입력해 주세요. 그래야 상대와의 궁합을 볼 수 있습니다.</p>
+    <button onclick="showTab('home')">홈으로 가서 내 사주 입력하기</button>
+  </div>
+  <div class="card" id="ghMe" style="display:none">
+    <h2>나</h2>
+    <div id="ghMeInfo" class="sec" style="font-size:15px;line-height:1.9"></div>
+  </div>
+  <div class="card" id="ghBcard">
+    <h2>상대 정보 입력</h2>
+    <label>이름(별칭)</label>
+    <input id="gpName" placeholder="예: 상대">
+    <div class="row">
+      <div><label>성별</label>
+        <select id="gpGender"><option value="F">여자</option><option value="M">남자</option></select></div>
+      <div><label>달력</label>
+        <select id="gpCal"><option value="S">양력</option><option value="L">음력</option><option value="LL">음력(윤달)</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>생년 (1920~2050)</label><select id="gpY"></select></div>
+    </div>
+    <div class="row">
+      <div><label>월</label><select id="gpM"></select></div>
+      <div><label>일</label><select id="gpD"></select></div>
+    </div>
+    <div class="row">
+      <div><label>태어난 시 (2시간 단위)</label><select id="gpH"></select></div>
+    </div>
+    <div class="chk"><input type="checkbox" id="gpUnk"><span>태어난 시간을 모릅니다</span></div>
+    <div class="chk"><input type="checkbox" id="gpTst" checked><span>진태양시 보정 (-30분, 한국 출생 권장)</span></div>
+    <button onclick="gunghapRun()">💞 궁합 보기</button>
+    <p class="note" style="margin-top:6px">※ 상대의 태어난 시간을 몰라도 계산됩니다(일지·연지·일간 중심). 음력·윤달도 자동 변환됩니다.</p>
+  </div>
+  <div id="ghResult" style="display:none"></div>
+  <div class="pgnav"><button class="btn2" onclick="tabMove(-1)">◀ 이전 화면</button><button class="btn2" onclick="tabMove(1)">다음 화면 ▶</button></div>
+</div>
+
+<div class="tpage" id="pg-astro">
+  <div class="card">
+    <h2>♈ 서양 점성술</h2>
+    <p class="note" style="margin-top:0">생년월일시와 출생지로 태양·달·상승궁과 열 행성의 별자리·하우스, 행성 간 각도(애스펙트)를 계산해 풀이합니다. 동양의 사주·자미두수와는 독립된 체계라 교차로 보면 재미있어요. 두 사람의 별자리 상성(궁합)도 함께 볼 수 있습니다.</p>
+    <p style="margin-top:10px;padding:12px 14px;background:#E9EEF4;border:1px solid #CBD9E7;border-radius:13px;font-size:13.5px;line-height:1.75">🔒 <b>개인정보 무저장</b> — 생년월일·출생지는 이 기기 안에서만 계산되고, 저장·전송되지 않습니다. 화면을 닫으면 사라집니다.</p>
+  </div>
+  <div class="card" id="asNeed" style="display:none">
+    <p class="note" style="margin-top:0">먼저 홈 화면 오른쪽 👤 에서 <b>나의 생년월일시</b>를 입력해 주세요. 그래야 나의 천궁도와 궁합을 볼 수 있습니다.</p>
+    <button onclick="showTab('home')">홈으로 가서 내 정보 입력하기</button>
+  </div>
+  <div class="card" id="asModeCard" style="display:none">
+    <div class="row">
+      <div><button id="asBtnSolo" onclick="astroMode('solo')">🌟 나의 천궁도</button></div>
+      <div><button id="asBtnSyn" onclick="astroMode('syn')">💞 별자리 궁합</button></div>
+    </div>
+  </div>
+  <div class="card" id="asMeCard" style="display:none">
+    <h2>나의 출생 정보</h2>
+    <div id="asMeInfo" class="sec" style="font-size:14.5px;line-height:1.85"></div>
+    <p class="note" style="margin-top:6px">사주는 2시간 단위로 충분하지만, 상승궁은 분 단위에 민감합니다. 정확한 출생 시각을 알면 아래에서 조정해 주세요.</p>
+    <div class="row">
+      <div><label>정확한 시각 — 시</label><select id="myHour"></select></div>
+      <div><label>분</label><select id="myMin"></select></div>
+    </div>
+    <label>출생 도시</label>
+    <select id="myCity" onchange="asLocToggle('myCity','myLocBox')"></select>
+    <div id="myLocBox" style="display:none;margin-top:8px">
+      <div class="row">
+        <div><label>위도(+북)</label><input id="myLat" placeholder="예: 37.57"></div>
+        <div><label>경도(+동)</label><input id="myLon" placeholder="예: 126.98"></div>
+        <div><label>표준시 UTC±</label><input id="myTz" placeholder="예: 9"></div>
+      </div>
+    </div>
+    <p class="note" id="asUnkNote" style="display:none">※ ‘태어난 시간 모름’으로 입력하셨습니다 — 태양·행성 별자리만 계산하고 상승궁·하우스는 생략합니다.</p>
+  </div>
+  <div class="card" id="asBcard" style="display:none">
+    <h2>상대 출생 정보</h2>
+    <label>이름(별칭)</label>
+    <input id="bName" placeholder="예: 상대">
+    <div class="row">
+      <div><label>생년</label><select id="bY"></select></div>
+      <div><label>월</label><select id="bMon"></select></div>
+      <div><label>일</label><select id="bD"></select></div>
+    </div>
+    <div class="row">
+      <div><label>시</label><select id="bHour"></select></div>
+      <div><label>분</label><select id="bMin"></select></div>
+    </div>
+    <div class="chk"><input type="checkbox" id="bUnk"><span>상대의 태어난 시간을 모릅니다</span></div>
+    <label>상대 출생 도시</label>
+    <select id="bCity" onchange="asLocToggle('bCity','bLocBox')"></select>
+    <div id="bLocBox" style="display:none;margin-top:8px">
+      <div class="row">
+        <div><label>위도(+북)</label><input id="bLat" placeholder="예: 37.57"></div>
+        <div><label>경도(+동)</label><input id="bLon" placeholder="예: 126.98"></div>
+        <div><label>표준시 UTC±</label><input id="bTz" placeholder="예: 9"></div>
+      </div>
+    </div>
+  </div>
+  <button id="asRunSolo" onclick="astroSoloRun()">🌟 나의 천궁도 보기</button>
+  <button id="asRunSyn" onclick="astroSynRun()" style="display:none">💞 별자리 궁합 보기</button>
+  <div id="asResult" style="display:none"></div>
   <div class="pgnav"><button class="btn2" onclick="tabMove(-1)">◀ 이전 화면</button><button class="btn2" onclick="tabMove(1)">다음 화면 ▶</button></div>
 </div>
 
@@ -658,6 +770,8 @@ body{padding-bottom:92px}
   <button class="tb" id="tb-jum" onclick="showTab('jum')"><span class="ic">☯️</span>점술</button>
   <button class="tb" id="tb-tj" onclick="showTab('tj')"><span class="ic">📜</span>토정비결</button>
   <button class="tb" id="tb-saju" onclick="showTab('saju')"><span class="ic">🔮</span>사주</button>
+  <button class="tb" id="tb-gh" onclick="showTab('gh')"><span class="ic">💞</span>궁합</button>
+  <button class="tb" id="tb-astro" onclick="showTab('astro')"><span class="ic">♈</span>별자리</button>
   <button class="tb" id="tb-mk" onclick="showTab('mk')"><span class="ic">👶</span>작명</button>
 </nav>
 
@@ -1036,28 +1150,15 @@ function render(s){
   st+=sajuChongpyeong(s,ysn,cnt,dw,age,yGz,seG);
   el("rStory").innerHTML=st;
   function t0y(){ return (new Date()).getFullYear(); }
-  // 오늘의 운세
-  var t=new Date();
-  var tgz=dayGZ(t.getFullYear(),t.getMonth()+1,t.getDate()), tsn=tgz%10, tbr=tgz%12;
-  var rel=sipsin(s.ds,tsn), tx=TODAY_TXT[rel], sc=tx.sc, extra="";
-  if(HAP[tbr]===s.db){ sc=Math.min(99,sc+8); extra=" 오늘의 일진이 나의 일지와 합(合)을 이루어 인연과 화합의 기운이 더해집니다."; }
-  if(CHUNG[tbr]===s.db){ sc=Math.max(35,sc-15); extra=" 오늘의 일진이 나의 일지와 충(沖)이 되어 변동·이동수가 있으니 중요한 결정은 신중히 하세요."; }
-  /* 동적 보정 v2 — 오늘의 오행 vs 내 용신 + 12운성 (표시층) */
-  var twg=dwEW(ysn,GANEL[tsn]), twb=dwEW(ysn,JIEL[tbr]), tSum=twg+twb;
-  var tAdj=Math.round(tSum*3); sc=Math.max(30,Math.min(99,sc+tAdj));
-  var tUn=UNS_NM[unseong(s.ds,tbr)];
-  var tYong=tSum>=1.4?" 오늘의 간지 오행이 내 용신("+ELNM[ysn.el]+")을 크게 도와(보정 +"+tAdj+") 평소보다 힘이 실리는 날이에요.":
-   tSum>=0.6?" 오늘의 간지 오행이 내 용신 편이라(보정 +"+tAdj+") 잔잔한 순풍이 붑니다.":
-   tSum<=-1.4?" 오늘의 간지 오행이 용신("+ELNM[ysn.el]+")을 거슬러(보정 "+tAdj+") 무리한 일정은 줄이는 게 좋아요.":
-   tSum<0?" 오늘의 간지 오행이 용신과 살짝 어긋나(보정 "+tAdj+") 컨디션 관리가 먼저입니다.":" 오늘의 오행은 내 용신과 중립이라 기본 흐름 그대로 갑니다.";
-  var tUnTxt=" 12운성으로 오늘은 '"+tUn+"'의 자리 — "+(UNS_TXT[tUn]?UNS_TXT[tUn].split(".")[0]+".":"");
-  el("tTitle").textContent="오늘의 운세 ("+t.getFullYear()+"."+(t.getMonth()+1)+"."+t.getDate()+")";
-  el("tScore").textContent=sc;
-  el("tIlj").textContent="오늘의 일진: "+GAN[tsn]+JI[tbr]+"("+GANHJ[tsn]+JIHJ[tbr]+")일 · 나에게 "+rel+"의 날";
-  el("tTotal").textContent=tx.t+extra+tYong+tUnTxt;
-  el("tMoney").textContent=tx.m; el("tLove").textContent=tx.l; el("tHealth").textContent=tx.h;
-  var mn2=(function(){var c2=cnt.indexOf(Math.min.apply(null,cnt));return c2;})();
-  el("lColor").textContent=LUCKY[mn2][0]; el("lNum").textContent=LUCKY[mn2][1]; el("lDir").textContent=LUCKY[mn2][2];
+  // 오늘의 운세 (다축 동적 엔진 — TodayLuck: 십신·합충·용신·12운성·신강약)
+  var tl=TodayLuck.today(s,ysn,cnt,null,{g:cur.g,age:age,dw:dw});
+  el("tTitle").textContent="오늘의 운세 ("+tl.date+")";
+  el("tScore").textContent=tl.score;
+  el("tIlj").textContent="오늘의 일진: "+tl.iljin+" · "+tl.relLabel;
+  el("tTotal").innerHTML=tl.total;
+  el("tMoney").innerHTML=tl.money; el("tLove").innerHTML=tl.love; el("tHealth").innerHTML=tl.health;
+  if(el("tAdvice"))el("tAdvice").innerHTML=tl.advice;
+  el("lColor").textContent=tl.lucky.color; el("lNum").textContent=tl.lucky.num; el("lDir").textContent=tl.lucky.dir;
   el("tdWrap").style.display="block";
 }
 function todayLuck(){
@@ -1373,7 +1474,7 @@ function showJY(){
   el("jyDetail").innerHTML=s;
   var grade=(movs.length>=4)?dj[3]:db[3];
   var tone=grade>=6?"흐름이 크게 열려 있는":grade>=5?"무리 없이 풀려가는":grade>=4?"신중하게 다루면 통하는":"한 번 브레이크를 밟아야 하는";
-  var moveMsg=movs.length>0?('특히 지금은 「'+db[2]+'」에서 「'+dj[2]+'」(으)로 판이 넘어가는 길목이라 곧 상황이 한 번 바뀝니다. 그 변화를 거스르기보다 올라타는 편이 유리해요. '):
+  var moveMsg=movs.length>0?('특히 지금은 「'+db[2]+'」에서 「'+dj[2]+'」'+(function(w){var c=w.charCodeAt(w.length-1)-0xAC00,j=(c>=0&&c<11172)?c%28:1;return(j===0||j===8)?'로':'으로';})(dj[2])+' 판이 넘어가는 길목이라 곧 상황이 한 번 바뀝니다. 그 변화를 거스르기보다 올라타는 편이 유리해요. '):
    '괘가 움직이지 않아 당분간은 지금 흐름이 이어집니다. 큰 변수 없이 흘러가니 기본에 충실하면 됩니다. ';
   var q=el("jyQ").value.trim();
   el("jySum").innerHTML=(q?'"'+q+'" — ':'')+'【주역점 완성 · 6/6효】 세운 괘는 「'+db[0]+' '+db[1]+'」, '+tone+' 형세입니다. '+moveMsg+
@@ -2619,26 +2720,20 @@ function monthWeek(){
   if(!cur){ alert("먼저 위에서 사주를 조회해 주세요."); return; }
   var s=calcSaju(cur.y,cur.m,cur.d,cur.h,cur.min,cur.unk,cur.tst);
   var t=new Date();
-  var ts=calcSaju(t.getFullYear(),t.getMonth()+1,t.getDate(),12,0,true,false);
-  var relM=sipsin(s.ds,ts.ms);
-  el("mwMT").textContent="이번 달 ("+GAN[ts.ms]+JI[ts.mb]+"월) — 나에게 '"+relM+"'의 달";
-  var ysnM=yongsin(s), gMw=dwRate(ysnM,{s:ts.ms,b:ts.mb},s.ds,s.mb,s);
-  el("mwM").innerHTML=MON_TXT[relM]+" "+(TODAY_TXT[relM].m)+"<br><span class='note'>엔진 정밀 판정 — 이번 달은 "+dwRateTxtFull(gMw,{s:ts.ms,b:ts.mb},s,ysnM)+".</span>";
+  var ysnM=yongsin(s), cntM=[0,0,0,0,0];
+  [s.ys,s.ms,s.ds,s.hs].forEach(function(x){ if(x!=null)cntM[GANEL[x]]++; });
+  [s.yb,s.mb,s.db,s.hb].forEach(function(x){ if(x!=null)cntM[JIEL[x]]++; });
+  var mwCtx={g:cur.g, age:(new Date()).getFullYear()-cur.y+1, dw:daewoon(s,cur.g)};
+  var mo=TodayLuck.month(s,ysnM,cntM,t,mwCtx);
+  el("mwMT").textContent=mo.title;
+  el("mwM").innerHTML=mo.total+"<br><span class='note'>재물 — "+mo.money+" · 조언 — "+mo.advice+"</span>";
   // 주간: 이번 주 월~일
-  var day=t.getDay(), mon=new Date(t); mon.setDate(t.getDate()-((day+6)%7));
-  var names=["월","화","수","목","금","토","일"], html="", best=-1,worst=101,bi=0,wi=0, scs=[];
-  for(var i=0;i<7;i++){ var d2=new Date(mon); d2.setDate(mon.getDate()+i);
-    var dg=dayGZ(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
-    var sc=TODAY_TXT[sipsin(s.ds,dg%10)].sc;
-    if(HAP[dg%12]===s.db)sc=Math.min(99,sc+8);
-    if(CHUNG[dg%12]===s.db)sc=Math.max(35,sc-15);
-    scs.push(sc);
-    if(sc>best){best=sc;bi=i;} if(sc<worst){worst=sc;wi=i;}
-  }
-  for(var j=0;j<7;j++){ html+='<div class="'+(j===bi?"best":j===wi?"worst":"")+'"><div class="bar" style="height:'+(scs[j]*0.7)+'px"></div>'+names[j]+'<br>'+scs[j]+'</div>'; }
+  var wk=TodayLuck.week(s,ysnM,cntM,t,mwCtx), html="", best=-1,worst=101,bi=0,wi=0;
+  wk.forEach(function(d,i){ if(d.score>best){best=d.score;bi=i;} if(d.score<worst){worst=d.score;wi=i;} });
+  wk.forEach(function(d,j){ html+='<div class="'+(j===bi?"best":j===wi?"worst":"")+'"><div class="bar" style="height:'+(d.score*0.7)+'px"></div>'+d.dow+'<br>'+d.score+'</div>'; });
   el("mwWk").innerHTML=html;
-  el("mwW").textContent="이번 주는 "+names[bi]+"요일("+scs[bi]+"점)이 가장 길하니 중요한 약속·결정은 이날에 두고, "
-    +names[wi]+"요일("+scs[wi]+"점)에는 큰 결정과 언쟁을 피하십시오.";
+  el("mwW").textContent="이번 주는 "+wk[bi].dow+"요일("+wk[bi].score+"점)이 가장 길하니 중요한 약속·결정은 이날에 두고, "
+    +wk[wi].dow+"요일("+wk[wi].score+"점)에는 큰 결정과 언쟁을 피하십시오.";
   el("mwResult").style.display="block";
 }
 /* ============ 평생운·시기별운 ============ */
@@ -3896,13 +3991,15 @@ var TAROT_B64=[
 ];
 
 /* ============ 모바일 셸 v3 (v1.0): 홈 간소화 · 점술 보강(육효·자미·하락) · 작명 개선 (2026-07-06) ============ */
-var TABS=["home","jum","tj","saju","mk"];
+var TABS=["home","jum","tj","saju","gh","astro","mk"];
 function showTab(k){
   TABS.forEach(function(t){ var pg=el("pg-"+t), b=el("tb-"+t);
     if(pg)pg.classList.toggle("active",t===k); if(b)b.classList.toggle("on",t===k); });
   window.scrollTo(0,0);
   if(k==="home") homeInit();
   if(k==="saju") sajuInit();
+  if(k==="gh") gunghapInit();
+  if(k==="astro") astroInit();
 }
 function tabMove(d){ var i=-1; TABS.forEach(function(t,j){ if(el("pg-"+t).classList.contains("active"))i=j; });
   showTab(TABS[((i+d)%TABS.length+TABS.length)%TABS.length]); }
@@ -4795,7 +4892,956 @@ function lockTry(){
   showTab("home");
 })();
 </script>
-<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-07-16 r13</b> · 토정 원전 시구 6,480구(독음 병기) · 전 항목 동적 해석</div>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   궁합 동적 엔진 v1.0 (HTML 이식) — 2026-07-16 클로드
+   설계 정본: 실행설계_궁합(2103) §1 · 궁합Phase0/Phase1(27검증) 로직 인라인
+   원칙: 무저장(브라우저 내 계산·저장/전송 없음) · 엔진 계산식(calcSaju·yongsin) 불변(간지만 입력)
+   동적성: 두 사주쌍마다 상이 · 같은 쌍은 항상 동일(결정론) — 다른 엔진과 동일 원칙
+   ══════════════════════════════════════════════════════════════════ */
+(function(root){
+  'use strict';
+  var GANEL=[0,0,1,1,2,2,3,3,4,4], JIEL=[4,2,0,0,2,1,1,2,3,3,2,4];
+  var ELNM=['목','화','토','금','수'];
+  var YUKHAP={0:1,1:0,2:11,11:2,3:10,10:3,4:9,9:4,5:8,8:5,6:7,7:6};
+  var SAMHAP=[[8,0,4],[5,9,1],[2,6,10],[11,3,7]];
+  var WONJIN={0:7,7:0,1:6,6:1,2:9,9:2,3:8,8:3,4:11,11:4,5:10,10:5};
+  var GANCHUNG={0:6,6:0,1:7,7:1,2:8,8:2,3:9,9:3};
+  var RAW_MIN=27, RAW_MAX=100;
+  function isSamhap(a,b){ return SAMHAP.some(function(g){return g.indexOf(a)>=0&&g.indexOf(b)>=0&&a!==b;}); }
+  function isChung(a,b){ return b===(a+6)%12; }
+  function eul(w){ var c=w.charCodeAt(w.length-1)-0xAC00; return (c>=0&&c<11172&&c%28!==0)?'을':'를'; } // 조사 을/를 (받침 판정)
+  function ohaengBonus(A,B){ if(A.buJok==null||!B.ohaeng) return {v:10,why:'정보부족(중립)'};
+    var amt=B.ohaeng[A.buJok]||0, nm=ELNM[A.buJok]; return {v:Math.min(20,8+amt*4),why:'내 부족 '+nm+eul(nm)+' 상대가 '+amt+'개 보유'}; }
+  function yongsinBonus(A,B){ if(A.yongsin==null||!B.ohaeng) return {v:5,why:'용신정보 없음(기본)'};
+    var amt=B.ohaeng[A.yongsin]||0, nm=ELNM[A.yongsin]; return {v:Math.min(10,amt*4),why:'내 용신 '+nm+eul(nm)+' 상대가 '+amt+'개 보유'}; }
+  function scoreOneWay(A,B){
+    var s=0,d={};
+    if(YUKHAP[A.ilJi]===B.ilJi||isSamhap(A.ilJi,B.ilJi)){s+=30;d.ilJi=[30,'합'];}
+    else if(isChung(A.ilJi,B.ilJi)){s+=6;d.ilJi=[6,'충'];}
+    else if(WONJIN[A.ilJi]===B.ilJi){s+=9;d.ilJi=[9,'원진'];}
+    else{s+=20;d.ilJi=[20,'무관'];}
+    if(YUKHAP[A.yeonJi]===B.yeonJi||isSamhap(A.yeonJi,B.yeonJi)){s+=20;d.tti=[20,'합'];}
+    else if(isChung(A.yeonJi,B.yeonJi)||WONJIN[A.yeonJi]===B.yeonJi){s+=6;d.tti=[6,'충/원진'];}
+    else{s+=13;d.tti=[13,'무관'];}
+    if(B.ilGan===(A.ilGan+5)%10){s+=20;d.ilGan=[20,'합'];}
+    else if(GANCHUNG[A.ilGan]===B.ilGan){s+=7;d.ilGan=[7,'충'];}
+    else{s+=13;d.ilGan=[13,'무관'];}
+    var oh=ohaengBonus(A,B); s+=oh.v; d.ohaeng=[oh.v,oh.why];
+    var yo=yongsinBonus(A,B); s+=yo.v; d.yongsin=[yo.v,yo.why];
+    return {raw:s,detail:d};
+  }
+  function gunghapRaw(A,B){ return (scoreOneWay(A,B).raw+scoreOneWay(B,A).raw)/2; }
+  function rescale(raw){ var v=Math.round(42+(raw-RAW_MIN)/(RAW_MAX-RAW_MIN)*58); return Math.max(42,Math.min(100,v)); }
+  function labelOf(sc){ if(sc>=90)return '천생연분'; if(sc>=75)return '좋은 궁합'; if(sc>=60)return '무난한 궁합'; if(sc>=45)return '노력형 궁합'; return '조심스러운 궁합'; }
+  var SUMMARY={
+   '천생연분':'타고난 결이 잘 맞는 조합입니다. 서로의 강점이 자연스럽게 이어져요. 상세 풀이에서 어떤 부분이 특히 빛나는지 확인해 보세요.',
+   '좋은 궁합':'기본 궁합이 든든합니다. 작은 차이만 이해하면 오래가는 관계예요. 어디를 맞춰가면 좋은지 상세 풀이로 이어집니다.',
+   '무난한 궁합':'무난하게 어울리는 조합입니다. 강점과 보완점이 함께 있어요. 두 사람의 균형점이 어디인지 확인해 보세요.',
+   '노력형 궁합':'서로 다른 결이 있어 이해가 열쇠입니다. 차이를 알면 오히려 성장하는 관계예요. 어떤 부분을 맞추면 좋은지 상세 풀이에서 안내합니다.',
+   '조심스러운 궁합':'서로 다른 점이 뚜렷한 조합입니다. 다름을 인정하면 충분히 보완할 수 있어요. 구체적으로 어디를 배려하면 좋은지 확인해 보세요.'
+  };
+  function detailText(A,B){
+    var dAB=scoreOneWay(A,B).detail, dBA=scoreOneWay(B,A).detail;
+    function rel(x){return x[1];}
+    var ilGan=rel(dAB.ilGan);
+    var seong = ilGan==='합' ? '천간이 서로 어울려, 기본 성향이 자연스럽게 맞물립니다. 큰 결이 통해 대화가 편안한 편이에요.'
+             : ilGan==='충' ? '천간이 부딪히는 자리라 스타일 차이가 또렷합니다. 서로의 방식을 “틀림”이 아닌 “다름”으로 보면 오히려 자극이 됩니다.'
+             : '성향이 크게 충돌하지도 완전히 같지도 않은, 무난한 조합입니다. 각자의 리듬을 존중하면 편안합니다.';
+    var ilJi=rel(dAB.ilJi);
+    var ae = ilJi==='합' ? '부부·연인 궁합의 핵심인 일지가 합을 이뤄, 정서적으로 잘 끌어당기는 조합입니다.'
+           : ilJi==='충' ? '일지가 충하는 자리라 가까울수록 부딪힘도 큽니다. 거리 조절과 “한 박자 쉬기”가 관계를 지킵니다.'
+           : ilJi==='원진' ? '일지 원진의 미묘한 어긋남이 있습니다. 사소한 신경 쓰임을 그때그때 풀면 앙금이 남지 않습니다.'
+           : '애정의 결이 담백하게 어울립니다. 표현을 조금 더 자주 하면 온도가 올라갑니다.';
+    var ohV=dAB.ohaeng[0]+dBA.ohaeng[0], yoV=dAB.yongsin[0]+dBA.yongsin[0];
+    var jae = (ohV>=32||yoV>=16) ? '서로 부족한 기운을 채워주는 보완형이라, 함께할수록 안정감이 커지는 조합입니다. 공동의 목표를 세우면 시너지가 납니다.'
+            : (ohV<=20) ? '비슷한 기운이 겹쳐 편안하지만 보완은 약한 편입니다. 역할을 분담해 서로의 빈자리를 의식적으로 채워 보세요.'
+            : '보완이 부분적으로 이뤄집니다. 돈·살림 등 현실 문제는 규칙을 미리 정해 두면 잡음이 줄어듭니다.';
+    var g=[];
+    if(rel(dAB.ilJi)==='충') g.push('일지 충(가까운 사이의 마찰)');
+    if(rel(dAB.ilJi)==='원진') g.push('일지 원진(미묘한 신경 쓰임)');
+    if(rel(dAB.ilGan)==='충') g.push('천간 충(스타일 차이)');
+    if(rel(dAB.tti)==='충/원진') g.push('띠 충·원진(생활 리듬 차이)');
+    var gal = g.length ? '주의할 지점은 '+g.join(', ')+'입니다. 다만 이는 “안 맞음”이 아니라 “배려가 필요한 자리”예요. 미리 알면 대부분 예방됩니다.'
+            : '눈에 띄는 충·원진이 없어 큰 갈등 요인은 적은 편입니다. 방심하지 말고 표현과 배려를 꾸준히 이어가세요.';
+    var sc=rescale(gunghapRaw(A,B));
+    var jo = sc>=75 ? '좋은 바탕을 가진 만큼, 당연하게 여기지 말고 작은 표현을 자주 하세요. 지금의 결을 오래 지키는 것이 관건입니다.'
+           : sc>=60 ? '균형이 잡힌 조합입니다. 서로의 강점을 인정하고 약점은 역할 분담으로 메우면 관계가 단단해집니다.'
+           : '차이가 있는 만큼 “다름을 이해”하는 것이 열쇠입니다. 대화의 절반을 듣기에 쓰면 오히려 함께 성장하는 관계가 됩니다.';
+    return {성격:seong,애정:ae,재물:jae,갈등요소:gal,조언:jo};
+  }
+  function fromSaju(s,yon){
+    var oh=[0,0,0,0,0];
+    [s.ys,s.ms,s.hs].forEach(function(x){if(x!=null)oh[GANEL[x]]++;});
+    [s.yb,s.db,s.hb].forEach(function(x){if(x!=null)oh[JIEL[x]]++;});
+    var buJok=0,mn=Infinity; for(var i=0;i<5;i++){if(oh[i]<mn){mn=oh[i];buJok=i;}}
+    return {ilGan:s.ds,ilJi:s.db,yeonJi:s.yb,ohaeng:oh,buJok:buJok,yongsin:yon?yon.el:null};
+  }
+  function gunghap(A,B){ try{
+    var raw=gunghapRaw(A,B),score=rescale(raw),label=labelOf(score);
+    return {score:score,raw:Math.round(raw*10)/10,label:label,summary:SUMMARY[label],detail:detailText(A,B),
+      breakdown:{AtoB:scoreOneWay(A,B).detail,BtoA:scoreOneWay(B,A).detail}};
+  }catch(e){ if(typeof console!=='undefined')console.error('궁합 계산 오류:',e); return null; } }
+  root.Gunghap={gunghap:gunghap,fromSaju:fromSaju,_scoreOneWay:scoreOneWay,_gunghapRaw:gunghapRaw,_rescale:rescale,_labelOf:labelOf};
+})(typeof window!=='undefined'?window:this);
+
+/* ── 궁합 UI (2인 입력·동적 렌더) — el/calcSaju/yongsin/GAN/JI/ELNM/GANEL/JIEL/TTI/lun2sol/cur 는 앱 전역 재사용 ── */
+var GH_SIJIN=["자시 · 밤 11시~새벽 1시","축시 · 새벽 1~3시","인시 · 새벽 3~5시","묘시 · 새벽 5~7시","진시 · 아침 7~9시","사시 · 오전 9~11시","오시 · 낮 11시~오후 1시","미시 · 오후 1~3시","신시 · 오후 3~5시","유시 · 오후 5~7시","술시 · 저녁 7~9시","해시 · 밤 9~11시"];
+var _ghFilled=false;
+function ghFill(id,from,to,sel,fmt){ var o="",i; for(i=from;i<=to;i++){o+='<option value="'+i+'"'+(i===sel?' selected':'')+'>'+(fmt?fmt(i):i)+'</option>';} var e=el(id); if(e)e.innerHTML=o; }
+function gunghapInit(){
+  if(!_ghFilled){ ghFill("gpY",1920,2050,1990,function(i){return i+"년";}); ghFill("gpM",1,12,1,function(i){return i+"월";}); ghFill("gpD",1,31,1,function(i){return i+"일";}); ghFill("gpH",0,11,6,function(i){return GH_SIJIN[i];}); _ghFilled=true; }
+  var has=!!cur;
+  if(el("ghNeed"))el("ghNeed").style.display=has?"none":"block";
+  if(el("ghMe"))el("ghMe").style.display=has?"block":"none";
+  if(el("ghBcard"))el("ghBcard").style.display=has?"block":"none";
+  if(has&&el("ghMeInfo")){ var A=calcSaju(cur.y,cur.m,cur.d,cur.h,cur.min,cur.unk,cur.tst);
+    el("ghMeInfo").innerHTML=cur.name+" · "+cur.y+"년생 "+(cur.g==="M"?"남":"여")+" — 일간 <b>"+GAN[A.ds]+"("+ELNM[GANEL[A.ds]]+")</b> · 일지 "+JI[A.db]+" · "+TTI[A.yb]+"띠"; }
+}
+function gunghapRun(){
+  if(!cur){ gunghapInit(); return; }
+  var A=calcSaju(cur.y,cur.m,cur.d,cur.h,cur.min,cur.unk,cur.tst), yA=yongsin(A);
+  var bName=((el("gpName").value||"").trim())||"상대";
+  var by=+el("gpY").value, bm=+el("gpM").value, bd=+el("gpD").value;
+  var bunk=el("gpUnk").checked, btst=el("gpTst").checked;
+  var bh=(+el("gpH").value)*2, bmin=0, bcal=el("gpCal").value;
+  if(bcal!=="S"){ if(by<1920||by>2050){alert("음력 입력은 1920~2050년만 지원합니다.");return;}
+    var sv=lun2sol(by,bm,bd,bcal==="LL"); if(!sv){alert("상대의 음력 날짜를 확인해 주세요.");return;} by=sv[0];bm=sv[1];bd=sv[2]; }
+  if(!by||!bm||!bd||by<1901||by>2099||bm<1||bm>12||bd<1||bd>31){ alert("상대의 생년월일을 확인해 주세요 (1901~2099년)."); return; }
+  var B=calcSaju(by,bm,bd,bh,bmin,bunk,btst), yB=yongsin(B);
+  var r=Gunghap.gunghap(Gunghap.fromSaju(A,yA),Gunghap.fromSaju(B,yB));
+  if(!r){ alert("궁합 계산 중 문제가 발생했습니다. 입력을 다시 확인해 주세요."); return; }
+  var bA=r.breakdown.AtoB;
+  var grcls=r.score>=75?"grade길":r.score>=45?"grade반":"grade흉";
+  function cellGZ(s){ return "일간 <b>"+GAN[s.ds]+"</b>("+ELNM[GANEL[s.ds]]+") · 일지 "+JI[s.db]+"("+ELNM[JIEL[s.db]]+") · "+TTI[s.yb]+"띠"; }
+  function relRow(nm,key,max){ var d=bA[key]; var c=d[0]>=max*0.7?"grade길":(d[0]<=max*0.35?"grade흉":"grade반");
+    return "<tr><td style='text-align:left'>"+nm+"</td><td style='text-align:left'>"+d[1]+"</td><td class='"+c+"'>"+d[0]+"/"+max+"</td></tr>"; }
+  var lab={ilJi:"일지(애정·배우자궁)",tti:"띠(생활 리듬)",ilGan:"일간(성향)"};
+  var st=[],ca=[]; ["ilJi","tti","ilGan"].forEach(function(k){ var rl=bA[k][1];
+    if(rl==="합")st.push(lab[k]); else if(rl==="충"||rl==="원진"||rl==="충/원진")ca.push(lab[k]); });
+  if(bA.ohaeng[0]>=16)st.push("오행 보완");
+  var keypoint=(st.length?"강점은 "+st.join(", ")+"에서의 어울림입니다. ":"")
+    +(ca.length?"배려가 필요한 자리는 "+ca.join(", ")+" — ‘안 맞음’이 아니라 ‘신경 쓰면 넘는 고개’입니다.":(st.length?"뚜렷한 충·원진이 없어 큰 마찰 요인은 적습니다.":""));
+  var d=r.detail;
+  var html=""
+  +"<div class='card'><h2>"+cur.name+" ✕ "+bName+"</h2>"
+  +"<div class='score'><b class='"+grcls+"'>"+r.score+"</b><span> 점 · "+r.label+"</span></div>"
+  +"<p class='sec' style='font-size:15px;line-height:1.9;margin-top:8px'>"+r.summary+"</p>"
+  +(keypoint?"<p class='sec' style='font-size:14.5px;line-height:1.85'>🔑 "+keypoint+"</p>":"")+"</div>"
+  +"<div class='card'><h2>두 사람 명식</h2>"
+  +"<p class='sec' style='font-size:14.5px;line-height:2'><b>"+cur.name+"</b> — "+cellGZ(A)+"<br><b>"+bName+"</b> — "+cellGZ(B)+"</p></div>"
+  +"<div class='card'><h2>항목별 궁합 근거 <span style='font-size:12px;color:var(--sub)'>(나 기준 보완)</span></h2>"
+  +"<table class='msk' style='font-size:14px'><tr><th style='text-align:left'>자리</th><th style='text-align:left'>관계</th><th>점수</th></tr>"
+  +relRow("일지 (애정·배우자)","ilJi",30)+relRow("띠·연지 (생활 리듬)","tti",20)+relRow("일간 (성향)","ilGan",20)
+  +relRow("오행 보완","ohaeng",20)+relRow("용신 보완","yongsin",10)+"</table>"
+  +"<p class='note'>일지 합=정서적 끌림 · 충/원진=배려가 필요한 자리 · 일간 합=성향의 조화 · 오행/용신 보완=상대가 내게 부족한 기운을 채워주는 정도. 점수는 두 사람의 간지로 계산되어 사주쌍마다 다르며, 같은 두 사람은 항상 같은 결과가 나옵니다.</p></div>"
+  +"<div class='card'><h2>상세 풀이</h2>"
+  +"<div class='sec'><h3>성격</h3><p>"+d.성격+"</p></div>"
+  +"<div class='sec'><h3>애정</h3><p>"+d.애정+"</p></div>"
+  +"<div class='sec'><h3>재물·현실</h3><p>"+d.재물+"</p></div>"
+  +"<div class='sec'><h3>갈등 요소</h3><p>"+d.갈등요소+"</p></div>"
+  +"<div class='sec'><h3>조언</h3><p>"+d.조언+"</p></div></div>"
+  +"<div class='card'><p class='note'>🔒 본 궁합 풀이는 재미와 자기 이해를 위한 참고용입니다. 두 사람의 생년월일은 이 기기 안에서만 계산되며 저장·전송되지 않습니다.</p></div>";
+  el("ghResult").innerHTML=html; el("ghResult").style.display="block";
+  try{ el("ghResult").scrollIntoView({behavior:"smooth"}); }catch(e){}
+}
+</script>
+<script>
+/* ==== 서양 점성술 엔진 + UI (풀 천궁도·시너스트리 동적 · 해석 v2 유료급 · r16) ==== */
+/* ============================================================
+ * 서양점성술엔진.js — 풀 천궁도 + 시너스트리 동적 엔진 (v0.1)
+ * ------------------------------------------------------------
+ * [원칙] (궁합엔진.js와 동일 계보)
+ *  - 무저장(휘발성): 모든 연산은 브라우저 안에서만. 서버 전송·저장 없음.
+ *  - 엔진 불변: 기존 사주 엔진(calcSaju/yongsin/daewoon 등) 미접촉. 완전 분리 모듈.
+ *  - 동적 엔진: 해석 문구는 "계산 결과(행성 위치·하우스·애스펙트)"에서
+ *              결정론적으로 합성한다. 고정 텍스트 테이블 금지.
+ *              같은 입력 → 같은 출력, 다른 입력 → 다른 출력.
+ *  - 문구: 단정·저주 금지. 건설적 프레이밍(차이 이해→보완).
+ *
+ * [계산 근거]
+ *  - 태양 황경: Meeus 저정밀(25장), of-date tropical, 정확도 ±0.01°
+ *  - 달 황경  : Meeus 축약(47장 주요항), 정확도 ±0.1°
+ *  - 행성 황경: Standish/JPL 케플러 요소(1800–2050) + 세차 보정 → of-date tropical
+ *  - 상승궁·MC: 항성시(GMST/LST) + 황도경사, 표준 구면 공식
+ *  - 하우스   : Whole Sign(상승 별자리=1하우스) — 견고·결정론(극지 실패 없음)
+ *  - 검증 앵커: 춘분=0°/하지=90°/추분=180°/동지=270° · 2020-12-21 목성·토성 대합(≈물병 0.5°)
+ * ============================================================ */
+(function (root) {
+  'use strict';
+
+  var D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  function rad(x){ return x * D2R; }
+  function norm360(x){ x = x % 360; return x < 0 ? x + 360 : x; }
+  function sind(x){ return Math.sin(rad(x)); }
+  function cosd(x){ return Math.cos(rad(x)); }
+  function tand(x){ return Math.tan(rad(x)); }
+
+  /* ---- 별자리 ---- */
+  var SIGN   = ['양자리','황소자리','쌍둥이자리','게자리','사자자리','처녀자리','천칭자리','전갈자리','사수자리','염소자리','물병자리','물고기자리'];
+  var SIGN_SYM = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  // 원소: 0불 1흙 2공기 3물   /  모드: 0활동 1고정 2변동
+  var SIGN_EL   = [0,1,2,3,0,1,2,3,0,1,2,3];
+  var SIGN_MODE = [0,1,2,0,1,2,0,1,2,0,1,2];
+  var SIGN_RULER= [4,3,2,1,0,2,3,9,5,6,10,11]; // 전통 지배행성 인덱스(달=1..명왕성 근사는 전통값)
+  var EL_NM   = ['불','흙','공기','물'];
+  var MODE_NM = ['활동','고정','변동'];
+
+  /* ---- 행성 ---- */
+  var PL = ['태양','달','수성','금성','화성','목성','토성','천왕성','해왕성','명왕성'];
+  var PL_SYM = ['☉','☽','☿','♀','♂','♃','♄','♅','♆','♇'];
+
+  /* ============================================================
+   * 1. 시각 → 율리우스일 (그레고리력, 1920~2050 전 구간)
+   *    utHours = UT 기준 시각(시, 소수). KST 입력은 -9 변환 후 전달.
+   * ============================================================ */
+  function julianDay(y, m, d, utHours){
+    if (m <= 2){ y -= 1; m += 12; }
+    var A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1))
+         + d + B - 1524.5 + (utHours || 0) / 24;
+  }
+  function jcentury(jd){ return (jd - 2451545.0) / 36525.0; }
+
+  /* 황도경사(of date) */
+  function obliquity(T){ return 23.439291 - 0.0130042 * T - 1.64e-7 * T * T + 5.04e-7 * T * T * T; }
+  /* 일반세차 in longitude (J2000 → of date), 도 */
+  function precession(T){ return (5028.796195 * T + 1.1054348 * T * T) / 3600; }
+
+  /* ============================================================
+   * 2. 태양 황경 (Meeus 25장, of-date tropical)
+   * ============================================================ */
+  function sunLon(T){
+    var L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+    var M  = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+    var C  = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sind(M)
+           + (0.019993 - 0.000101 * T) * sind(2 * M)
+           + 0.000289 * sind(3 * M);
+    var trueLon = L0 + C;
+    var omega = 125.04 - 1934.136 * T;
+    var app = trueLon - 0.00569 - 0.00478 * sind(omega); // 장동+광행차(겉보기)
+    return norm360(app);
+  }
+
+  /* ============================================================
+   * 3. 달 황경 (Meeus 47장 축약 — 주요 섭동항, of-date, ±0.1°)
+   * ============================================================ */
+  function moonLon(T){
+    var Lp = 218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T*T*T/538841 - T*T*T*T/65194000;
+    var D  = 297.8501921 + 445267.1114034 * T - 0.0018819 * T * T;
+    var M  = 357.5291092 + 35999.0502909 * T - 0.0001536 * T * T;
+    var Mp = 134.9633964 + 477198.8675055 * T + 0.0087414 * T * T;
+    var F  = 93.2720950  + 483202.0175233 * T - 0.0036539 * T * T;
+    var l = Lp
+      + 6.288774 * sind(Mp)
+      + 1.274027 * sind(2*D - Mp)
+      + 0.658314 * sind(2*D)
+      + 0.213618 * sind(2*Mp)
+      - 0.185116 * sind(M)
+      - 0.114332 * sind(2*F)
+      + 0.058793 * sind(2*D - 2*Mp)
+      + 0.057066 * sind(2*D - M - Mp)
+      + 0.053322 * sind(2*D + Mp)
+      + 0.045758 * sind(2*D - M)
+      - 0.040923 * sind(M - Mp)
+      - 0.034720 * sind(D)
+      - 0.030383 * sind(M + Mp)
+      + 0.015327 * sind(2*D - 2*F)
+      - 0.012528 * sind(Mp + 2*F)
+      + 0.010980 * sind(Mp - 2*F)
+      + 0.010675 * sind(4*D - Mp)
+      + 0.010034 * sind(3*Mp)
+      + 0.008548 * sind(4*D - 2*Mp);
+    return norm360(l);
+  }
+
+  /* ============================================================
+   * 4. 행성 황경 (Standish/JPL 케플러 요소 1800–2050 + 세차)
+   *    요소: [a, e, I, L, ϖ(long.peri), Ω(long.node)] @J2000 + 세기당 rate
+   * ============================================================ */
+  var KEP = {
+    수성: [0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593,
+           0.00000037,0.00001906,-0.00594749,149472.67411175,0.16047689,-0.12534081],
+    금성: [0.72333566,0.00677672,3.39467605,181.97909950,131.60246718,76.67984255,
+           0.00000390,-0.00004107,-0.00078890,58517.81538729,0.00268329,-0.27769418],
+    지구: [1.00000261,0.01671123,-0.00001531,100.46457166,102.93768193,0.0,
+           0.00000562,-0.00004392,-0.01294668,35999.37244981,0.32327364,0.0],
+    화성: [1.52371034,0.09339410,1.84969142,-4.55343205,-23.94362959,49.55953891,
+           0.00001847,0.00007882,-0.00813131,19140.30268499,0.44441088,-0.29257343],
+    목성: [5.20288700,0.04838624,1.30439695,34.39644051,14.72847983,100.47390909,
+           -0.00011607,-0.00013253,-0.00183714,3034.74612775,0.21252668,0.20469106],
+    토성: [9.53667594,0.05386179,2.48599187,49.95424423,92.59887831,113.66242448,
+           -0.00125060,-0.00050991,0.00193609,1222.49362201,-0.41897216,-0.28867794],
+    천왕성:[19.18916464,0.04725744,0.77263783,313.23810451,170.95427630,74.01692503,
+           -0.00196176,-0.00004397,-0.00242939,428.48202785,0.40805281,0.04240589],
+    해왕성:[30.06992276,0.00859048,1.77004347,-55.12002969,44.96476227,131.78422574,
+           0.00026291,0.00005105,0.00035372,218.45945325,-0.32241464,-0.00508664],
+    명왕성:[39.48211675,0.24882730,17.14001206,238.92903833,224.06891629,110.30393684,
+           -0.00031596,0.00005170,0.00004818,145.20780515,-0.04062942,-0.01183482]
+  };
+
+  /* 케플러 요소 → 태양중심 J2000 황도 직교좌표 */
+  function helioXYZ(name, T){
+    var k = KEP[name];
+    var a = k[0]+k[6]*T, e = k[1]+k[7]*T, I = k[2]+k[8]*T,
+        L = k[3]+k[9]*T, peri = k[4]+k[10]*T, node = k[5]+k[11]*T;
+    var w = peri - node;
+    var M = L - peri; M = ((M % 360) + 540) % 360 - 180;   // -180..180
+    var estar = R2D * e;
+    var E = M + estar * sind(M), dE = 1, n = 0;
+    while (Math.abs(dE) > 1e-8 && n < 30){
+      dE = (M - (E - estar * sind(E))) / (1 - e * cosd(E));
+      E += dE; n++;
+    }
+    var xp = a * (cosd(E) - e);
+    var yp = a * Math.sqrt(1 - e * e) * sind(E);
+    var cO=cosd(node), sO=sind(node), cI=cosd(I), sI=sind(I), cw=cosd(w), sw=sind(w);
+    return [
+      (cw*cO - sw*sO*cI)*xp + (-sw*cO - cw*sO*cI)*yp,
+      (cw*sO + sw*cO*cI)*xp + (-sw*sO + cw*cO*cI)*yp,
+      (sw*sI)*xp + (cw*sI)*yp
+    ];
+  }
+
+  /* 행성 지심 황경(of-date tropical) */
+  function planetLon(name, T){
+    var p = helioXYZ(name, T), earth = helioXYZ('지구', T);
+    var xg = p[0]-earth[0], yg = p[1]-earth[1];
+    var lon = norm360(R2D * Math.atan2(yg, xg));
+    return norm360(lon + precession(T));
+  }
+
+  /* ============================================================
+   * 5. 상승궁 · MC (항성시 + 구면 공식)
+   * ============================================================ */
+  function gmst(jd){
+    var T = jcentury(jd);
+    var g = 280.46061837 + 360.98564736629 * (jd - 2451545.0)
+          + 0.000387933 * T * T - T * T * T / 38710000.0;
+    return norm360(g);
+  }
+  /* lonEast=동경(+), latDeg=위도(+북). → {asc, mc} 황경(deg) */
+  function ascMc(jd, latDeg, lonEast){
+    var T = jcentury(jd), eps = obliquity(T);
+    var ramc = norm360(gmst(jd) + lonEast);          // 지방 항성시(도)
+    var mc = norm360(R2D * Math.atan2(sind(ramc), cosd(ramc) * cosd(eps)));
+    var asc = R2D * Math.atan2(cosd(ramc),
+              -(sind(ramc) * cosd(eps) + tand(latDeg) * sind(eps)));
+    asc = norm360(asc);
+    // ASC는 MC로부터 황도 순방향으로 ~90° 앞(동쪽 지평선). 반대편이면 180° 보정.
+    if (norm360(asc - mc) > 180) asc = norm360(asc + 180);
+    return { asc: asc, mc: mc, ramc: ramc, eps: eps };
+  }
+
+  /* ============================================================
+   * 6. 애스펙트 (합0·육각60·사각90·삼각120·충180 + 오브)
+   * ============================================================ */
+  var ASPECTS = [
+    { nm:'합',   ang:0,   orb:8, kind:'강화' },
+    { nm:'육각', ang:60,  orb:4, kind:'조화' },
+    { nm:'사각', ang:90,  orb:6, kind:'긴장' },
+    { nm:'삼각', ang:120, orb:6, kind:'조화' },
+    { nm:'충',   ang:180, orb:8, kind:'긴장' }
+  ];
+  function aspectBetween(lon1, lon2){
+    var diff = Math.abs(norm360(lon1 - lon2));
+    if (diff > 180) diff = 360 - diff;
+    for (var i = 0; i < ASPECTS.length; i++){
+      var a = ASPECTS[i], gap = Math.abs(diff - a.ang);
+      if (gap <= a.orb) return { nm:a.nm, kind:a.kind, ang:a.ang, orb:Math.round(gap*10)/10, exact:a.orb-gap };
+    }
+    return null;
+  }
+
+  /* ============================================================
+   * 7. 출생 차트 (계산 코어)
+   *    KST 생년월일시(y,m,d,h,min) + 위/경도 + tz(표준시 오프셋, 한국=9)
+   * ============================================================ */
+  function chart(y, m, d, h, min, lat, lon, tz, opt){
+    opt = opt || {};
+    var utH = (h || 0) + (min || 0) / 60 - (tz == null ? 9 : tz);
+    // UT가 자정을 넘나들면 날짜 보정은 julianDay가 소수시로 처리(연속) → jd에 그대로 반영
+    var jd = julianDay(y, m, d, utH);
+    var T = jcentury(jd);
+    var pos = {};
+    pos['태양'] = sunLon(T);
+    pos['달']   = moonLon(T);
+    ['수성','금성','화성','목성','토성','천왕성','해왕성','명왕성'].forEach(function(nm){
+      pos[nm] = planetLon(nm, T);
+    });
+    var hasTime = !opt.unknownTime;
+    var am = null, ascSign = null;
+    if (hasTime && lat != null && lon != null){
+      am = ascMc(jd, lat, lon);
+      ascSign = Math.floor(am.asc / 30);
+    }
+    // 행성별 별자리·하우스(Whole Sign: 상승 별자리=1하우스)
+    var planets = PL.map(function(nm){
+      var L = pos[nm], sign = Math.floor(L / 30), deg = L - sign * 30;
+      var house = (ascSign != null) ? ((sign - ascSign + 12) % 12) + 1 : null;
+      return { name:nm, lon:L, sign:sign, deg:deg, house:house, retro:false };
+    });
+    // 애스펙트(모든 쌍)
+    var asps = [];
+    for (var i = 0; i < PL.length; i++)
+      for (var j = i + 1; j < PL.length; j++){
+        var a = aspectBetween(pos[PL[i]], pos[PL[j]]);
+        if (a) asps.push({ p1:PL[i], p2:PL[j], nm:a.nm, kind:a.kind, orb:a.orb, exact:a.exact });
+      }
+    return {
+      jd: jd, T: T, hasTime: hasTime,
+      pos: pos, planets: planets, aspects: asps,
+      asc: am ? am.asc : null, mc: am ? am.mc : null,
+      ascSign: ascSign,
+      sunSign: Math.floor(pos['태양'] / 30),
+      moonSign: Math.floor(pos['달'] / 30)
+    };
+  }
+
+  /* ============================================================
+   * 8. 동적 해석 v2 (유료급·쉬운말) — 계산 결과에서 문구를 결정론적으로
+   *    합성한다. 전문용어는 쉬운 말+괄호 원어. 고정 텍스트 테이블 아님.
+   * ============================================================ */
+  function josa(w, a, b){ if(!w) return b; var c = w.charCodeAt(w.length-1)-0xAC00; return (c>=0&&c<11172&&c%28!==0)?a:b; }
+  function eun(w){ return w+josa(w,'은','는'); }
+  function eul(w){ return w+josa(w,'을','를'); }
+  function iga(w){ return w+josa(w,'이','가'); }
+
+  /* ── 12별자리: 성격·강점·그늘·연애결 (쉬운말) ── */
+  var SIGN_INFO = [
+    {tag:'열정적인 개척자',      nature:'하고 싶은 게 생기면 곧장 뛰어드는 추진력이 있어요. 솔직하고 에너지가 넘쳐, 앞장서서 판을 여는 사람입니다.', good:'용기·추진력·솔직함', care:'가끔 성급하고 욱하는 마음', love:'좋으면 먼저 다가가는 직진 스타일'},
+    {tag:'듬직한 감각파',        nature:'서두르지 않고 꾸준히 쌓아가는 안정감이 있어요. 오감이 발달해 좋은 것을 알아보고, 한번 정하면 잘 바뀌지 않습니다.', good:'끈기·신뢰감·현실감각', care:'변화를 싫어하는 고집', love:'천천히 스며들어 오래 가는 편'},
+    {tag:'재치있는 소통가',      nature:'호기심이 많고 머리 회전이 빨라요. 말솜씨와 재치로 어디서든 분위기를 살리고, 새로운 것을 금방 배웁니다.', good:'재치·적응력·다재다능', care:'관심이 자주 옮겨가는 산만함', love:'대화가 잘 통해야 마음이 열리는 편'},
+    {tag:'따뜻한 보호자',        nature:'정이 많고 감수성이 풍부해요. 내 사람을 챙기고 감싸는 마음이 깊어, 가족 같은 편안함을 주는 사람입니다.', good:'공감·헌신·다정함', care:'예민하고 상처를 오래 품는 면', love:'마음을 준 사람에게 깊이 헌신하는 편'},
+    {tag:'빛나는 주인공',        nature:'당당하고 표현력이 좋아요. 사람들 앞에서 빛나고, 마음이 넓어 베풀 줄 압니다. 존재감이 자연스럽게 드러나는 사람입니다.', good:'카리스마·따뜻함·자신감', care:'인정받고 싶은 마음·자존심', love:'표현이 화끈하고 로맨틱한 편'},
+    {tag:'섬세한 완성가',        nature:'꼼꼼하고 분석적이에요. 작은 것도 놓치지 않고 챙기며, 성실하게 자기 일을 완성해내는 사람입니다.', good:'꼼꼼함·성실·실용성', care:'걱정이 많고 자신·남에게 엄격한 면', love:'조용히 챙겨주며 진심을 행동으로 보이는 편'},
+    {tag:'세련된 조율가',        nature:'조화와 균형을 소중히 해요. 상대를 배려하고 아름다운 것을 알아보며, 관계 속에서 편안함을 만드는 사람입니다.', good:'배려·세련됨·공정함', care:'결정을 미루는 우유부단함', love:'분위기와 매너를 중시하는 로맨티스트'},
+    {tag:'깊이있는 통찰가',      nature:'속이 깊고 한번 빠지면 끝까지 파고들어요. 겉으로 잘 드러내지 않지만 통찰력과 의리가 강한 사람입니다.', good:'몰입·통찰·의리', care:'의심과 집착으로 흐를 수 있는 면', love:'전부를 걸 만큼 강렬하고 진한 편'},
+    {tag:'자유로운 모험가',      nature:'낙천적이고 솔직해요. 넓은 세상과 새로운 배움을 좋아하며, 얽매이지 않는 자유로운 기운을 지닌 사람입니다.', good:'긍정·솔직·모험심', care:'싫증과 책임을 흘리는 면', love:'구속 없이 함께 성장하는 관계를 원함'},
+    {tag:'단단한 성취가',        nature:'책임감이 강하고 인내심이 깊어요. 목표를 정하면 묵묵히 끝까지 밀고 가, 시간이 지날수록 단단해지는 사람입니다.', good:'끈기·책임감·야망', care:'완고하고 차가워 보일 수 있는 면', love:'표현은 서툴러도 오래 책임지는 편'},
+    {tag:'독창적인 자유인',      nature:'남과 다른 시선을 지녔어요. 틀에 얽매이지 않고 이성적이며, 미래지향적인 아이디어가 많은 사람입니다.', good:'개성·통찰·박애', care:'거리감·고집으로 보일 수 있는 면', love:'친구 같은 편안함에서 시작하는 사랑'},
+    {tag:'감성적인 몽상가',      nature:'상상력과 공감 능력이 뛰어나요. 마음이 여리고 예술적이며, 남의 아픔을 함께 느끼는 따뜻한 사람입니다.', good:'감성·연민·예술성', care:'현실을 놓치거나 휩쓸리는 면', love:'헌신적이고 낭만적인, 하나 되는 사랑'}
+  ];
+
+  /* ── 10행성: 무엇을 뜻하는가(쉬운말) ── */
+  var PLANET_INFO = [
+    {role:'나의 근본 자아와 삶의 목적', q:'나는 근본적으로 어떤 사람이고, 무엇으로 빛나고 싶은가', gen:false},
+    {role:'속마음과 감정, 편안함을 느끼는 방식', q:'혼자일 때·감정적일 때의 진짜 나는 어떤가', gen:false},
+    {role:'생각하고 말하는 방식', q:'어떻게 사고하고 소통하는가', gen:false},
+    {role:'사랑·취향·매력', q:'무엇을 사랑하고 어떤 것에 끌리는가', gen:false},
+    {role:'열정과 추진력, 욕구', q:'무엇을 원하고 어떻게 밀어붙이는가', gen:false},
+    {role:'행운과 성장의 기회', q:'어디서 넓어지고 복이 들어오는가', gen:false},
+    {role:'책임과 시련, 어른이 되는 과제', q:'무엇을 견디며 단단해지는가', gen:false},
+    {role:'개성과 변화의 충동', q:'어디서 남다르고 자유로운가', gen:true},
+    {role:'꿈·상상·영성', q:'무엇을 꿈꾸고 어디서 마음의 경계가 녹는가', gen:true},
+    {role:'깊은 변화와 재생의 힘', q:'무엇을 끝까지 파고들어 거듭나는가', gen:true}
+  ];
+  var PL_SHORT = ['자아','감정','생각','사랑','열정','행운','책임','개성','상상','변화'];
+
+  /* ── 12하우스: 인생의 어느 무대인가 ── */
+  var HOUSE_INFO = [
+    {area:'나 자신·첫인상',   desc:'남에게 비치는 모습과 인생을 대하는 기본 태도'},
+    {area:'돈·소유·재능',     desc:'돈을 버는 방식과 나만의 재능·가치관'},
+    {area:'소통·공부·이웃',   desc:'말과 글, 배움, 가까운 사람들과의 교류'},
+    {area:'가정·마음의 뿌리', desc:'가족, 집, 마음이 쉬는 안식처'},
+    {area:'연애·취미·표현',   desc:'연애, 즐거움, 나를 표현하는 창작의 무대'},
+    {area:'일·건강·습관',     desc:'매일의 일과 몸 관리, 생활 습관'},
+    {area:'파트너·결혼',      desc:'연인·배우자, 일대일의 깊은 관계'},
+    {area:'깊은 인연·변화',   desc:'깊이 얽히는 관계, 공유, 큰 변화와 재생'},
+    {area:'배움·여행·신념',   desc:'넓은 배움, 먼 여행, 삶의 철학과 믿음'},
+    {area:'직업·사회적 위치', desc:'직업, 사회에서의 목표와 명예'},
+    {area:'친구·꿈·모임',     desc:'친구, 공동체, 이루고 싶은 미래의 꿈'},
+    {area:'내면·휴식·무의식',  desc:'혼자만의 세계, 쉼, 마음 깊은 곳'}
+  ];
+
+  var EL_VIBE = ['뜨겁고 활동적인 불(열정·직관·행동)','차분하고 현실적인 흙(안정·감각·실용)','가볍고 사교적인 공기(사고·소통·관계)','촉촉하고 감성적인 물(감정·공감·직관)'];
+  var MODE_VIBE = ['새로 시작하고 이끄는', '한번 정하면 밀고 가는', '유연하게 맞춰가는'];
+
+  /* ── 행성 하나의 완전한 해석 ── */
+  function planetReading(pi, sign, house){
+    var P = PLANET_INFO[pi], S = SIGN_INFO[sign], el = SIGN_EL[sign], md = SIGN_MODE[sign];
+    var t = '<b>' + PL[pi] + '</b>(' + eul(P.role) + ' 뜻해요)' + josa(PL[pi],'이','가') + ' <b>' + SIGN[sign] + '</b>에 있어요. ';
+    if (pi === 0) t += '태양은 천궁도에서 가장 중요한 별로, ‘나는 근본적으로 누구인가’를 보여줍니다. ';
+    else if (pi === 1) t += '달은 남에게 잘 안 보이는 진짜 속마음과 감정을 보여줍니다. ';
+    t += SIGN[sign] + josa(SIGN[sign],'은','는') + ' ‘' + S.tag + '’ 기질이라, ' + S.nature + ' 그래서 ' + eun(P.role) + ' ' + MODE_VIBE[md] + ' ' + EL_NM[el] + ' 기운으로 드러납니다.';
+    if (house){ var H = HOUSE_INFO[house-1]; t += ' 이 기운은 주로 <b>' + house + '번째 무대(' + H.area + ')</b> — ' + H.desc + ' — 에서 발휘돼요.'; }
+    t += '<br>✨ <b>강점</b> ' + S.good + '　🌙 <b>살필 점</b> ' + S.care;
+    if (P.gen) t += '<br><span style="color:var(--sub);font-size:12.5px">※ 이 별은 천천히 움직여 또래가 비슷한 자리를 가져요(세대의 색). 태어난 무대(하우스)가 개인적 의미를 더해줍니다.</span>';
+    return t;
+  }
+
+  /* ── 빅3: 태양·달·상승 ── */
+  function bigThreeCards(sun, moon, asc){
+    var cards = [];
+    cards.push({ label:'☉ 태양 — 진짜 나 (' + SIGN[sun] + ')',
+      text:'태어난 목적과 근본 성격이에요. 당신은 ‘' + SIGN_INFO[sun].tag + '’ 유형 — ' + SIGN_INFO[sun].nature + ' 인생에서 ' + SIGN_INFO[sun].good + josa(SIGN_INFO[sun].good,'으로','로') + ' 빛날 때 가장 나답습니다.' });
+    cards.push({ label:'☽ 달 — 속마음 (' + SIGN[moon] + ')',
+      text:'남에게 잘 안 보이는 진짜 감정과, 편안함을 느끼는 방식이에요. 당신의 속마음은 ' + SIGN[moon] + '답게 ' + EL_VIBE[SIGN_EL[moon]] + ' 결로 움직여요. 지치고 힘들 때는 ' + SIGN_INFO[moon].love.replace('편','방식') + '처럼, ' + SIGN_INFO[moon].good + josa(SIGN_INFO[moon].good,'이','가') + ' 채워질 때 안정을 찾습니다.' });
+    if (asc != null){
+      cards.push({ label:'↗ 상승궁 — 첫인상 (' + SIGN[asc] + ')',
+        text:'남들이 당신을 처음 볼 때 받는 인상이자, 세상을 대하는 기본 태도예요. 태어난 순간 동쪽에 떠오른 별자리라 태어난 시각이 정확해야 맞습니다. 첫인상은 ' + SIGN[asc] + '답게 ‘' + SIGN_INFO[asc].tag + '’ 느낌 — 처음 보는 사람에게 ' + SIGN_INFO[asc].good + ' 쪽으로 비칩니다.' });
+    }
+    return cards;
+  }
+  function bigThreeSummary(sun, moon, asc){
+    var se = SIGN_EL[sun], me = SIGN_EL[moon];
+    var s = '한마디로, 겉으로 드러나는 나(태양)는 <b>' + SIGN[sun] + '</b>, 속마음(달)은 <b>' + SIGN[moon] + '</b>'
+      + (asc!=null ? ', 남에게 비치는 첫인상(상승)은 <b>' + SIGN[asc] + '</b>' : '') + '예요. ';
+    s += (se===me)
+      ? '겉과 속이 같은 ' + EL_NM[se] + ' 기운이라 마음과 행동이 일관돼, 자기다움이 뚜렷하고 남들이 이해하기 쉬운 사람입니다.'
+      : '겉모습은 ' + EL_NM[se] + ', 속마음은 ' + EL_NM[me] + ' 기운이라 겉과 속의 온도가 조금 달라요. 이 차이를 스스로 알아주면, 남들이 잘 모르는 깊이가 매력이 됩니다.';
+    return s;
+  }
+
+  /* ── 애스펙트(두 별의 각도)를 쉬운말로 ── */
+  var ASPECT_EASY = {
+    '합':   {tag:'꼭 붙어 다니는 사이', desc:'두 힘이 한 몸처럼 겹쳐서, 그 분야가 인생에서 아주 크게 부각돼요'},
+    '삼각': {tag:'서로 돕는 편한 사이', desc:'두 힘이 자연스럽게 잘 통해서, 타고난 재능처럼 술술 풀려요'},
+    '육각': {tag:'기회를 주는 사이',   desc:'두 힘이 부드럽게 어울려서, 노력하면 좋은 기회로 이어져요'},
+    '사각': {tag:'부딪히며 크는 사이', desc:'두 힘이 서로 밀고 당겨 긴장이 생기지만, 그만큼 성장의 에너지가 돼요'},
+    '충':   {tag:'마주 보는 사이',     desc:'두 힘이 정반대에서 당겨, 균형을 잡는 법을 배우면 큰 힘이 돼요'}
+  };
+  var PAIR_HINT = {
+    '태양달':'겉모습과 속마음','태양금성':'자아와 사랑','태양화성':'자아와 추진력','태양토성':'자아와 책임감',
+    '달금성':'감정과 애정','달화성':'감정과 열정','금성화성':'사랑과 열정(연애의 결)','수성금성':'생각과 취향',
+    '목성토성':'확장과 절제','태양목성':'자아와 행운'
+  };
+  function aspectReading(p1, p2, nm){
+    var e = ASPECT_EASY[nm] || {tag:'연결된 사이', desc:'두 힘이 서로 영향을 줘요'};
+    var key = [p1,p2].sort().join(''), hint = PAIR_HINT[key];
+    var r1 = PLANET_INFO[PL.indexOf(p1)].role.split(',')[0], r2 = PLANET_INFO[PL.indexOf(p2)].role.split(',')[0];
+    var title = p1 + ' × ' + p2 + ' — ' + e.tag;
+    var t = p1 + '(' + r1 + ')' + josa(p1,'과','와') + ' ' + p2 + '(' + r2 + ') — ' + e.desc + '.';
+    if (hint) t += ' 특히 ' + hint + '의 조화를 보여주는 자리예요.';
+    return { title:title, text:t };
+  }
+
+  /* ── 삶의 영역별 종합 (여러 행성 묶어 읽기) ── */
+  function lifeAreas(ch){
+    var sun=ch.sunSign, moon=ch.moonSign, S=SIGN_INFO;
+    var venus=ch.planets[3].sign, mars=ch.planets[4].sign, merc=ch.planets[2].sign, jup=ch.planets[5].sign;
+    var out = [];
+    out.push({ icon:'🧭', title:'성격·기질',
+      text:'근본 성격(태양 ' + SIGN[sun] + ')은 ' + S[sun].good + ', 속마음(달 ' + SIGN[moon] + ')은 ' + S[moon].good + '이 두드러져요. ' + S[sun].nature + ' 다만 ' + eun(S[sun].care) + ' 스스로 챙기면 좋아요.' });
+    out.push({ icon:'💗', title:'연애·매력',
+      text:'사랑의 방식(금성 ' + SIGN[venus] + ')은 ' + S[venus].love + ', 끌어당기는 열정(화성 ' + SIGN[mars] + ')은 ' + S[mars].good + ' 쪽이에요. 연애에서 당신은 ' + S[venus].love + ', 상대에게 ' + S[venus].good + josa(S[venus].good,'을','를') + ' 원하는 편입니다.' });
+    out.push({ icon:'💼', title:'일·재능',
+      text:'생각·소통(수성 ' + SIGN[merc] + ')은 ' + S[merc].good + ', 성장·행운(목성 ' + SIGN[jup] + ')은 ' + SIGN[jup] + ' 분야에서 열려요. ' + S[merc].good + josa(S[merc].good,'을','를') + ' 살리는 일에서 능력이 잘 발휘됩니다.' });
+    out.push({ icon:'🌱', title:'조언',
+      text:'타고난 강점 ' + S[sun].good + josa(S[sun].good,'을','를') + ' 믿고 쓰되, ' + S[moon].care + josa(S[moon].care,'을','를') + ' 다독이면 마음이 편안해져요. 겉(태양)과 속(달)의 결을 함께 존중하는 것이 당신다운 성장의 길입니다.' });
+    return out;
+  }
+
+  /* ── 원소 균형 ── */
+  function elementReading(planets){
+    var c=[0,0,0,0]; planets.forEach(function(p){ c[SIGN_EL[p.sign]]++; });
+    var mx=0,mn=0; for(var i=1;i<4;i++){ if(c[i]>c[mx])mx=i; if(c[i]<c[mn])mn=i; }
+    var t = '열 개의 별이 어느 기운에 모여 있는지를 보면 타고난 성향이 보여요. 당신은 <b>' + EL_NM[mx] + ' 기운</b>이 가장 강해서, ' + EL_VIBE[mx].split('(')[1].replace(')','') + ' 쪽이 두드러집니다. ';
+    t += (c[mn]===0)
+      ? '반대로 <b>' + EL_NM[mn] + ' 기운</b>이 비어 있어, ' + EL_VIBE[mn].split('(')[1].replace(')','') + ' 부분을 의식적으로 채우면 더 균형 잡혀요.'
+      : '네 기운이 비교적 고르게 있어 균형 잡힌 편입니다.';
+    return { counts:c, dominant:mx, lack:mn, text:t };
+  }
+
+  var GLOSSARY = [
+    {term:'태양', desc:'내가 근본적으로 어떤 사람인지 — 성격의 뼈대'},
+    {term:'달', desc:'남에게 잘 안 보이는 진짜 속마음과 감정'},
+    {term:'상승궁(ASC)', desc:'남들이 나를 처음 볼 때의 첫인상 — 태어난 시각이 정확해야 맞음'},
+    {term:'하우스', desc:'그 별의 기운이 인생의 어느 무대(연애·일·가정 등)에서 나타나는지'},
+    {term:'별자리 간 각도', desc:'두 별이 서로 돕는지(편한 사이) 부딪히는지(크는 사이)를 보는 것'}
+  ];
+
+  /* ---- 개인 천궁도 종합 ---- */
+  function natal(y, m, d, h, min, lat, lon, tz, opt){
+    var ch = chart(y, m, d, h, min, lat, lon, tz, opt);
+    var planets = ch.planets.map(function(p, i){
+      return { name:p.name, sym:PL_SYM[i], sign:p.sign, signNm:SIGN[p.sign], signSym:SIGN_SYM[p.sign],
+        deg:Math.round(p.deg*10)/10, house:p.house, houseArea:p.house?HOUSE_INFO[p.house-1].area:null,
+        role:PLANET_INFO[i].role, text:planetReading(i, p.sign, p.house) };
+    });
+    var aspects = ch.aspects.map(function(a){ var r=aspectReading(a.p1,a.p2,a.nm); return {p1:a.p1,p2:a.p2,nm:a.nm,kind:a.kind,orb:a.orb,title:r.title,text:r.text}; })
+      .sort(function(a,b){ return a.orb-b.orb; });
+    var headline = '☉ ' + SIGN[ch.sunSign] + ' 태양 · ☽ ' + SIGN[ch.moonSign] + ' 달' + (ch.ascSign!=null?' · ↗ ' + SIGN[ch.ascSign] + ' 상승':'');
+    return {
+      hasTime: ch.hasTime, sunSign:ch.sunSign, moonSign:ch.moonSign, ascSign:ch.ascSign, asc:ch.asc, mc:ch.mc,
+      headline: headline,
+      bigThree: bigThreeCards(ch.sunSign, ch.moonSign, ch.ascSign),
+      bigThreeSummary: bigThreeSummary(ch.sunSign, ch.moonSign, ch.ascSign),
+      planets: planets,
+      lifeAreas: lifeAreas(ch),
+      aspects: aspects,
+      elementBalance: elementReading(ch.planets),
+      glossary: GLOSSARY,
+      _chart: ch
+    };
+  }
+
+  /* ============================================================
+   * 9. 별자리 궁합(시너스트리) v2 — 쉬운말·영역별
+   * ============================================================ */
+  var SYN_POINTS = ['태양','달','금성','화성'];
+  function pairWeight(a,b){ var k=[a,b].sort().join('');
+    if(k===['태양','달'].sort().join(''))return 1.4; if(k===['금성','화성'].sort().join(''))return 1.4;
+    if(k===['태양','금성'].sort().join(''))return 1.2; if(k===['달','금성'].sort().join(''))return 1.2;
+    if(k===['달','화성'].sort().join(''))return 1.1; return 1.0; }
+  function orbOf(nm){ for(var i=0;i<ASPECTS.length;i++) if(ASPECTS[i].nm===nm)return ASPECTS[i].orb; return 8; }
+  function synastry(A, B, nameA, nameB){
+    nameA=nameA||'나'; nameB=nameB||'상대';
+    var posA=A._chart.pos, posB=B._chart.pos;
+    var pa=SYN_POINTS.slice(), pb=SYN_POINTS.slice();
+    if(A.ascSign!=null){ posA=Object.assign({상승:A.asc},posA); pa.push('상승'); }
+    if(B.ascSign!=null){ posB=Object.assign({상승:B.asc},posB); pb.push('상승'); }
+    var hits=[], harmony=0, tension=0, raw=0;
+    pa.forEach(function(x){ pb.forEach(function(y){
+      var asp=aspectBetween(posA[x],posB[y]); if(!asp)return;
+      var w=pairWeight(x,y), strength=asp.exact/orbOf(asp.nm);
+      var base=asp.kind==='조화'?10:asp.kind==='강화'?8:4, val=base*w*(0.5+0.5*strength);
+      raw+=val; if(asp.kind==='긴장')tension+=val; else harmony+=val;
+      hits.push({a:x,b:y,nm:asp.nm,kind:asp.kind,val:val});
+    }); });
+    hits.sort(function(m,n){ return n.val-m.val; });
+    var maxPairs=pa.length*pb.length;
+    var score=Math.round(Math.min(100,Math.max(0,(raw/(maxPairs*3.2))*100)));
+    var label=score>=85?'환상의 케미':score>=70?'잘 통하는 사이':score>=55?'무난한 사이':score>=40?'노력하며 맞춰가는 사이':'서로 다른 세계';
+    // 지점별 쉬운 해석
+    function role(nm){ return nm==='상승'?'첫인상':PL_SHORT[PL.indexOf(nm)]; }
+    var highlights = hits.slice(0,4).map(function(h){
+      var e=ASPECT_EASY[h.nm]||{tag:'연결',desc:'서로 영향을 줘요'};
+      return { title: nameA+'의 '+h.a+' × '+nameB+'의 '+h.b+' — '+e.tag,
+        text: nameA+'의 '+role(h.a)+josa(role(h.a),'과','와')+' '+nameB+'의 '+role(h.b)+' — '+e.desc+'.' };
+    });
+    // 영역별
+    function findPair(x,y){ var best=null; hits.forEach(function(h){ if(((h.a===x&&h.b===y)||(h.a===y&&h.b===x))&&(!best||h.val>best.val))best=h; }); return best; }
+    function areaLine(x,y,goodTxt,softTxt){ var h=findPair(x,y); if(!h)return '뚜렷한 연결은 약한 편이라, 이 부분은 서로 알아가며 맞춰가면 좋아요.';
+      return (h.kind==='긴장')?softTxt:goodTxt; }
+    var areas=[
+      {icon:'💞', title:'끌림·설렘', text: areaLine('금성','화성','사랑(금성)과 열정(화성)이 잘 맞아, 서로에게 자연스럽게 끌리고 설렘이 오래가는 조합이에요.','사랑과 열정의 방식이 달라 불꽃은 튀지만, 표현을 맞춰가는 노력이 필요해요.')},
+      {icon:'💬', title:'마음·대화', text: areaLine('태양','달','한 사람의 자아와 다른 사람의 감정이 편하게 맞물려, 같이 있으면 마음이 놓이는 사이예요.','자아와 감정의 결이 달라, 서로의 방식을 이해하려는 대화가 관계를 지켜줘요.')},
+      {icon:'🎯', title:'가치관', text: areaLine('태양','금성','서로 좋아하는 것과 지향이 닮아, 함께 있는 시간이 즐겁고 취향이 잘 통해요.','좋아하는 것이 조금 달라, 서로의 취향을 존중하면 오히려 새로움이 됩니다.')},
+      {icon:'🌿', title:'오래가려면', text: (tension>harmony*0.9)?'끌림과 긴장이 둘 다 큰 뜨거운 조합이에요. 솔직한 표현과 배려로 균형을 잡으면 깊고 열정적인 관계가 됩니다.':'조화로운 연결이 우세해, 큰 마찰 없이 서로를 지지하며 안정적으로 오래갈 수 있는 사이예요.'}
+    ];
+    var summary = (score>=70)
+      ? '두 사람은 중요한 지점이 여러 곳에서 이어져, 함께 있으면 편하고 서로를 끌어당기는 사이예요.'
+      : (score>=55)
+      ? '기본 상성은 무난해요. 서로 다른 부분을 이해로 채우면 오래가는 관계가 됩니다.'
+      : '결이 꽤 다른 조합이에요. 다름을 자극이자 배움으로 받아들이면 함께 크는 사이가 될 수 있어요.';
+    var advice = '점수는 참고일 뿐, 관계는 결국 서로를 알아가는 노력으로 완성돼요. 위 ‘오래가려면’의 조언을 함께 지키면 어떤 조합이든 좋아집니다.';
+    return { score:score, label:label, oneLine:label+' ('+score+'점)',
+      harmony:Math.round(harmony), tension:Math.round(tension),
+      summary:summary, highlights:highlights, areas:areas, advice:advice,
+      bothSigns:{ a:{sun:A.sunSign,moon:A.moonSign,asc:A.ascSign}, b:{sun:B.sunSign,moon:B.moonSign,asc:B.ascSign} } };
+  }
+
+  /* ---- 공개 API ---- */
+  var api = {
+    chart: chart,
+    natal: natal,
+    synastry: synastry,
+    _julianDay: julianDay, _sunLon: sunLon, _moonLon: moonLon,
+    _planetLon: planetLon, _ascMc: ascMc, _aspectBetween: aspectBetween,
+    _const: { SIGN:SIGN, SIGN_SYM:SIGN_SYM, SIGN_EL:SIGN_EL, SIGN_MODE:SIGN_MODE,
+              EL_NM:EL_NM, MODE_NM:MODE_NM, PL:PL, PL_SYM:PL_SYM, ASPECTS:ASPECTS,
+              HOUSE_INFO:null }
+  };
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.Astro = api;
+})(typeof window !== 'undefined' ? window : this);
+/* ── 서양 점성술 UI (개인 천궁도 · 시너스트리 궁합) — 앱 전역 el/cur/lun2sol 재사용 ──
+   무저장: 입력값은 이 기기 안에서만 계산, 저장·전송 없음. window.Astro(엔진) 사용. */
+var ASTRO_CITY=[
+ ['서울',37.57,126.98,9],['부산',35.18,129.08,9],['인천',37.46,126.71,9],['대구',35.87,128.60,9],
+ ['대전',36.35,127.38,9],['광주',35.16,126.85,9],['울산',35.54,129.31,9],['수원',37.26,127.03,9],
+ ['성남',37.42,127.13,9],['고양',37.66,126.83,9],['용인',37.24,127.18,9],['창원',35.23,128.68,9],
+ ['청주',36.64,127.49,9],['전주',35.82,127.15,9],['천안',36.82,127.11,9],['춘천',37.88,127.73,9],
+ ['강릉',37.75,128.90,9],['포항',36.02,129.34,9],['제주',33.50,126.53,9],['평양',39.02,125.75,9],
+ ['도쿄',35.68,139.70,9],['오사카',34.69,135.50,9],['베이징',39.90,116.41,8],['상하이',31.23,121.47,8],
+ ['홍콩',22.32,114.17,8],['타이베이',25.03,121.57,8],['싱가포르',1.35,103.82,8],['방콕',13.76,100.50,7],
+ ['하노이',21.03,105.85,7],['델리',28.61,77.21,5.5],['두바이',25.20,55.27,4],['모스크바',55.76,37.62,3],
+ ['런던',51.51,-0.13,0],['파리',48.86,2.35,1],['베를린',52.52,13.40,1],['로마',41.90,12.50,1],
+ ['뉴욕',40.71,-74.01,-5],['LA',34.05,-118.24,-8],['시카고',41.88,-87.63,-6],['토론토',43.65,-79.38,-5],
+ ['상파울루',-23.55,-46.63,-3],['시드니',-33.87,151.21,10]
+];
+var _asFilled=false, _asMode='solo';
+function asFill(id,from,to,sel,suf){ var o='',i; for(i=from;i<=to;i++)o+='<option value="'+i+'"'+(i===sel?' selected':'')+'>'+i+(suf||'')+'</option>'; var e=el(id); if(e)e.innerHTML=o; }
+function asCityFill(id){ var o='<option value="">— 도시 선택 —</option>',i; for(i=0;i<ASTRO_CITY.length;i++)o+='<option value="'+i+'">'+ASTRO_CITY[i][0]+'</option>'; o+='<option value="_m">＋ 직접 입력(위·경도)</option>'; var e=el(id); if(e)e.innerHTML=o; }
+function asLocToggle(selId,boxId){ var e=el(selId),b=el(boxId); if(e&&b)b.style.display=(e.value==='_m')?'block':'none'; }
+function asGetLoc(selId,latId,lonId,tzId){ var e=el(selId); if(!e)return null; var v=e.value;
+  if(v==='_m'){ var la=parseFloat(el(latId).value),lo=parseFloat(el(lonId).value),tz=parseFloat(el(tzId).value);
+    if(isNaN(la)||isNaN(lo)||isNaN(tz))return null; return [la,lo,tz]; }
+  if(v===''||v==null)return null; var c=ASTRO_CITY[+v]; return [c[1],c[2],c[3]]; }
+
+function astroMode(m){ _asMode=m;
+  if(el('asBtnSolo'))el('asBtnSolo').style.opacity=(m==='solo')?'1':'.45';
+  if(el('asBtnSyn'))el('asBtnSyn').style.opacity=(m==='syn')?'1':'.45';
+  el('asBcard').style.display=(m==='syn')?'block':'none';
+  el('asRunSolo').style.display=(m==='solo')?'block':'none';
+  el('asRunSyn').style.display=(m==='syn')?'block':'none';
+  el('asResult').innerHTML=''; el('asResult').style.display='none';
+}
+function astroInit(){
+  var has=!!cur;
+  if(!_asFilled){
+    asCityFill('myCity'); asCityFill('bCity');
+    asFill('myHour',0,23,(has&&cur.h!=null?cur.h:12),'시'); asFill('myMin',0,59,0,'분');
+    asFill('bHour',0,23,12,'시'); asFill('bMin',0,59,0,'분');
+    asFill('bY',1920,2050,1990,'년'); asFill('bMon',1,12,1,'월'); asFill('bD',1,31,1,'일');
+    if(el('myCity'))el('myCity').value='0'; if(el('bCity'))el('bCity').value='0'; // 서울 기본
+    _asFilled=true;
+  }
+  el('asNeed').style.display=has?'none':'block';
+  el('asMeCard').style.display=has?'block':'none';
+  el('asModeCard').style.display=has?'block':'none';
+  if(has){
+    el('asMeInfo').innerHTML=cur.name+' · '+cur.y+'년 '+cur.m+'월 '+cur.d+'일 '+(cur.g==='M'?'남':'여');
+    el('asUnkNote').style.display=cur.unk?'block':'none';
+  }
+  astroMode(_asMode);
+}
+function _astroFrom(name,g,y,mon,d,hour,min,unk,loc){
+  return window.Astro.natal(y,mon,d,unk?0:hour,unk?0:min,loc[0],loc[1],loc[2],{unknownTime:unk});
+}
+
+/* ---- 개인 천궁도 ---- */
+function astroSoloRun(){
+  if(!cur){ astroInit(); return; }
+  var loc=asGetLoc('myCity','myLat','myLon','myTz');
+  if(!loc){ alert('출생 도시를 선택하거나 위·경도를 입력해 주세요.'); return; }
+  var hour=+el('myHour').value, min=+el('myMin').value;
+  var N=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,hour,min,cur.unk,loc);
+  el('asResult').innerHTML=renderNatal(N,cur.name);
+  el('asResult').style.display='block';
+  try{ el('asResult').scrollIntoView({behavior:'smooth'}); }catch(e){}
+}
+/* ---- 별자리 궁합(시너스트리) ---- */
+function astroSynRun(){
+  if(!cur){ astroInit(); return; }
+  var locA=asGetLoc('myCity','myLat','myLon','myTz');
+  if(!locA){ alert('나의 출생 도시를 선택해 주세요.'); return; }
+  var locB=asGetLoc('bCity','bLat','bLon','bTz');
+  if(!locB){ alert('상대의 출생 도시를 선택해 주세요.'); return; }
+  var by=+el('bY').value, bm=+el('bMon').value, bd=+el('bD').value, bunk=el('bUnk').checked;
+  if(!by||!bm||!bd){ alert('상대의 생년월일을 확인해 주세요.'); return; }
+  var bName=((el('bName').value||'').trim())||'상대';
+  var A=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,+el('myHour').value,+el('myMin').value,cur.unk,locA);
+  var B=_astroFrom(bName,'?',by,bm,bd,+el('bHour').value,+el('bMin').value,bunk,locB);
+  var S=window.Astro.synastry(A,B,cur.name,bName);
+  el('asResult').innerHTML=renderSyn(S,A,B,cur.name,bName);
+  el('asResult').style.display='block';
+  try{ el('asResult').scrollIntoView({behavior:'smooth'}); }catch(e){}
+}
+
+/* ---- 렌더러 v2 (유료급·읽기 쉬운 배치) — 앱 클래스(card/sec/h2/h3/note/score/grade) 재사용 ---- */
+function _elBar(counts){
+  var nm=['불','흙','공기','물'], col=['#C56B5B','#C39A54','#5E9A79','#4E7CA6'], mx=Math.max.apply(null,counts)||1, h='';
+  for(var i=0;i<4;i++){ var w=Math.round(counts[i]/mx*100);
+    h+='<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span style="width:34px;font-size:13px">'+nm[i]+'</span>'
+      +'<span style="flex:1;background:#e8e2d6;border-radius:6px;overflow:hidden;height:14px"><span style="display:block;height:100%;width:'+w+'%;background:'+col[i]+'"></span></span>'
+      +'<span style="width:20px;font-size:12px;text-align:right">'+counts[i]+'</span></div>'; }
+  return h;
+}
+function renderNatal(N,name){
+  var h='<div class="card"><h2>'+name+'님의 별자리 지도</h2>'
+    +'<div class="score" style="font-size:16px;line-height:1.9">'+N.headline+'</div>'
+    +'<p class="sec" style="font-size:14.5px;line-height:1.9;margin-top:8px">'+N.bigThreeSummary+'</p></div>';
+  h+='<div class="card"><h2>나를 이루는 세 개의 별</h2>'
+    +'<p class="note" style="margin-top:0">서양 점성술에서 가장 먼저 보는 세 가지예요.</p>';
+  N.bigThree.forEach(function(c){ h+='<div class="sec"><h3>'+c.label+'</h3><p style="font-size:14.5px;line-height:1.9">'+c.text+'</p></div>'; });
+  h+='</div>';
+  h+='<div class="card"><h2>삶의 영역별 풀이</h2>';
+  N.lifeAreas.forEach(function(a){ h+='<div class="sec"><h3>'+a.icon+' '+a.title+'</h3><p style="font-size:14.5px;line-height:1.9">'+a.text+'</p></div>'; });
+  h+='</div>';
+  h+='<div class="card"><h2>열 개의 별, 하나씩 읽기</h2>'
+    +'<p class="note" style="margin-top:0">각 별이 무엇을 뜻하는지, 어떤 별자리와 인생 무대에 놓였는지 풀이했어요.</p>';
+  N.planets.forEach(function(p){ h+='<div class="sec" style="border-top:1px solid #eadfce;padding-top:9px;margin-top:9px"><p style="font-size:14px;line-height:1.9">'+p.sym+' '+p.text+'</p></div>'; });
+  h+='</div>';
+  h+='<div class="card"><h2>타고난 기운의 균형</h2>'+_elBar(N.elementBalance.counts)
+    +'<p class="sec" style="font-size:14px;line-height:1.85;margin-top:10px">'+N.elementBalance.text+'</p></div>';
+  if(N.aspects.length){
+    h+='<div class="card"><h2>별들 사이의 관계</h2>'
+      +'<p class="note" style="margin-top:0">별들이 서로 돕는지(편한 사이) 부딪히는지(크는 사이)를 봐요. 가까운 순서로 보여드려요.</p>';
+    N.aspects.slice(0,6).forEach(function(a){ var cls=a.kind==='조화'?'grade길':a.kind==='긴장'?'grade흉':'grade반';
+      h+='<div class="sec"><h3 style="font-size:14.5px"><b class="'+cls+'">●</b> '+a.title+'</h3><p style="font-size:13.5px;line-height:1.8">'+a.text+'</p></div>'; });
+    h+='</div>';
+  }
+  h+='<div class="card"><details><summary style="cursor:pointer;font-weight:700;font-size:15px">📖 별자리 용어, 쉽게 알아보기</summary><div style="margin-top:10px">';
+  N.glossary.forEach(function(g){ h+='<p style="font-size:13.5px;line-height:1.75;margin:5px 0"><b>'+g.term+'</b> — '+g.desc+'</p>'; });
+  h+='</div></details></div>';
+  h+='<div class="card"><p class="note">🔒 재미와 자기 이해를 위한 참고용이에요. 생년월일·출생지는 이 기기 안에서만 계산되며 저장·전송되지 않습니다. 상승궁·하우스는 정확한 출생 시각과 장소에 민감해요.</p></div>';
+  return h;
+}
+function renderSyn(S,A,B,nameA,nameB){
+  var C=window.Astro._const, SG=C.SIGN, SY=C.SIGN_SYM;
+  var grcls=S.score>=70?'grade길':S.score>=45?'grade반':'grade흉';
+  var h='<div class="card"><h2>'+nameA+' ✕ '+nameB+' · 별자리 궁합</h2>'
+    +'<div class="score"><b class="'+grcls+'">'+S.score+'</b><span> 점 · '+S.label+'</span></div>'
+    +'<p class="sec" style="font-size:15px;line-height:1.9;margin-top:8px">'+S.summary+'</p></div>';
+  h+='<div class="card"><h2>네 가지로 보는 두 사람</h2>';
+  S.areas.forEach(function(a){ h+='<div class="sec"><h3>'+a.icon+' '+a.title+'</h3><p style="font-size:14.5px;line-height:1.9">'+a.text+'</p></div>'; });
+  h+='</div>';
+  if(S.highlights.length){
+    h+='<div class="card"><h2>두 사람을 잇는 지점</h2>'
+      +'<p class="note" style="margin-top:0">두 사람의 별이 가장 강하게 연결되는 곳이에요.</p>';
+    S.highlights.forEach(function(t){ h+='<div class="sec"><h3 style="font-size:14px">🔗 '+t.title+'</h3><p style="font-size:13.5px;line-height:1.8">'+t.text+'</p></div>'; });
+    h+='</div>';
+  }
+  h+='<div class="card"><h2>두 사람의 별자리</h2>'
+    +'<p class="sec" style="font-size:14px;line-height:2"><b>'+nameA+'</b> — ☉ '+SY[A.sunSign]+SG[A.sunSign]+' · ☽ '+SY[A.moonSign]+SG[A.moonSign]+(A.ascSign!=null?' · ↗ '+SY[A.ascSign]+SG[A.ascSign]:'')+'<br>'
+    +'<b>'+nameB+'</b> — ☉ '+SY[B.sunSign]+SG[B.sunSign]+' · ☽ '+SY[B.moonSign]+SG[B.moonSign]+(B.ascSign!=null?' · ↗ '+SY[B.ascSign]+SG[B.ascSign]:'')+'</p>'
+    +'<p class="note">유대 '+S.harmony+' · 긴장 '+S.tension+' — 태양·달·금성·화성·상승 다섯 지점의 각도로 계산해요. 같은 두 사람은 항상 같은 결과입니다.</p></div>';
+  h+='<div class="card"><h3>💡 관계 조언</h3><p class="sec" style="font-size:14.5px;line-height:1.9">'+S.advice+'</p></div>';
+  h+='<div class="card"><p class="note">🔒 재미와 자기 이해를 위한 참고용이에요. 두 사람의 생년월일·출생지는 이 기기 안에서만 계산되며 저장·전송되지 않습니다.</p></div>';
+  return h;
+}
+</script>
+<script>
+/* ==== 오늘의 운세 통합 시간운세 엔진 (r19) ==== */
+/* ==== 통합 시간운세 엔진 (window.TodayLuck) — 오늘·이번주·이번달 공통 다축 + 대운·세운 심화 ====
+   재사용 전역(입력): TODAY_TXT·MON_TXT·sipsin·dayGZ·calcSaju·unseong·dwEW·dwRate·daewoon·MansaeCore·
+     yongsin·dwGrade·HAP·CHUNG·GANEL·JIEL·JIBON·ELNM·GAN·JI·GANHJ·JIHJ·UNS_NM·UNS_TXT·LUCKY
+   [원칙] PROTECTED(calcSaju·daewoon·dayGZ·sipsin·dwRate 등) 계산식 불접촉·입력만 사용·무저장·결정론.
+   [7축] ①십신(들어오는 천간 vs 일간) ②용신(들어오는 오행 vs 용신) ③합충(들어오는 지지 vs 내 전 지지)
+         ④12운성 ⑤신강약 ⑥대운(현재 대운 희기 dwRate) ⑦세운(올해 희기 dwRate)
+         → 명식 전체+생애 시점을 반영 → 같은 십신도 사람·대운·세운·날마다 상이(변별력↑).
+   [재보정] 용신 배율 ↑(변별력)·대운/세운 가산(개인차)·합충 완화(과출렁 억제)·기준선 상향(clamp 42~). */
+(function (root) {
+  'use strict';
+  var THEME = {비견:'자신감과 주체성',겁재:'경쟁과 승부',식신:'즐거움과 표현',상관:'재치와 창의',
+    편재:'활동과 기회',정재:'성실과 안정',편관:'책임과 시련',정관:'명예와 질서',편인:'통찰과 사색',정인:'배움과 보살핌'};
+  var JI_AREA = {'년':'집안·뿌리','월':'일·사회 활동','일':'나 자신·배우자','시':'자녀·말년'};
+  var UN_BONUS = {제왕:4,건록:3,장생:3,관대:2,양:1,태:1,목욕:0,쇠:-1,병:-3,사:-3,묘:-2,절:-2};
+
+  function areaJoin(arr){ return arr.map(function(x){ return JI_AREA[x[0]]; }).join('·'); }
+  function countEl(s){ var c=[0,0,0,0,0];
+    [s.ys,s.ms,s.ds,s.hs].forEach(function(x){ if(x!=null)c[GANEL[x]]++; });
+    [s.yb,s.mb,s.db,s.hb].forEach(function(x){ if(x!=null)c[JIEL[x]]++; }); return c; }
+  function yearGZ(y){ try{ return MansaeCore.yearMonthPillar(MansaeCore.clockToJD(y,7,1,12,0)); }catch(e){ return null; } }
+  function nowDae(ctx){ if(!ctx||ctx.dw==null||ctx.age==null) return null;
+    var L=ctx.dw.list||[]; for(var i=0;i<L.length;i++){ if(ctx.age>=L[i].age && ctx.age<L[i].age+10) return L[i]; }
+    return L.length?L[L.length-1]:null; }
+
+  /* 공통 다축 코어: 들어오는 간지(tsn/tbr)를 명식에 대입 → 점수·문구.
+     unit='day'|'week'|'month' — 시간 표현(오늘/이번 주/이번 달)만 달라짐. */
+  function core(s, ysn, cnt, tsn, tbr, base, ctx, year, unit){
+    cnt = cnt || countEl(s);
+    var el = ELNM[ysn.el];
+    var TW = unit==='month' ? '이번 달' : unit==='week' ? '이번 주' : '오늘';
+    var PW = unit==='month' ? '달' : unit==='week' ? '주' : '날';
+    var GW = unit==='month' ? '월건' : '일진';
+
+    // ① 용신
+    var tg = dwEW(ysn, GANEL[tsn]), tb = dwEW(ysn, JIEL[tbr]), tSum = tg + tb;   // -2 ~ +2
+    // ② 합충
+    var brs = [['일',s.db],['월',s.mb],['년',s.yb]];
+    if (s.hb != null) brs.push(['시', s.hb]);
+    var haps = brs.filter(function(x){ return HAP[tbr]===x[1]; });
+    var chungs = brs.filter(function(x){ return CHUNG[tbr]===x[1]; });
+    // ③ 12운성
+    var un = UNS_NM[unseong(s.ds, tbr)];
+    // ⑥ 대운 ⑦ 세운 (dwRate: -3~+3, PROTECTED 입력)
+    var dwP = nowDae(ctx);
+    var dwFav = dwP ? dwRate(ysn, dwP, s.ds, s.mb, s) : 0;
+    var yg = yearGZ(year);
+    var seFav = yg ? dwRate(ysn, {s:yg.ys, b:yg.yb}, s.ds, s.mb, s) : 0;
+
+    // 점수(재보정): 용신 ×5·대운 ×2·세운 ×1·합충 완화·기준선 42
+    var sc = base.sc + Math.round(tSum*5) + (UN_BONUS[un]||0) + dwFav*2 + seFav;
+    haps.forEach(function(h){ sc += (h[0]==='일'?5:3); });
+    chungs.forEach(function(c){ sc -= (c[0]==='일'?7:4); });
+    sc = Math.max(42, Math.min(99, sc));
+
+    // 용신 레이어
+    var yong = tSum>=1.4 ? ' 여기에 '+TW+' 들어오는 기운이 나에게 꼭 필요한 <b>'+el+'</b> 기운을 넉넉히 채워 주어, 평소보다 일이 술술 풀리고 몸에도 힘이 실리는 '+PW+'입니다.'
+      : tSum>=0.5 ? ' '+TW+'의 기운이 은근히 내 편이라, 잔잔한 순풍을 탄 듯 무난하게 흘러가는 '+PW+'입니다.'
+      : tSum<=-1.4 ? ' 다만 '+TW+' 기운이 내게 필요한 <b>'+el+'</b> 기운을 거스르니, 무리한 일정은 덜어 내고 컨디션부터 챙기는 편이 좋은 '+PW+'입니다.'
+      : tSum<0 ? ' 다만 '+TW+' 기운이 살짝 어긋나니, 큰 승부를 걸기보다 가진 것을 지키고 다듬는 데 집중하면 좋습니다.'
+      : ' '+TW+' 기운은 나와 크게 밀고 당기지 않아, 평소의 흐름 그대로 담담히 가면 되는 '+PW+'입니다.';
+    // 합충 레이어
+    var hc = '';
+    if (haps.length) hc += ' '+TW+' '+GW+'이 '+areaJoin(haps)+' 자리와 <b>합(合)</b>을 이루어, 그 자리에서 도움과 반가운 인연이 들어옵니다.';
+    if (chungs.length) hc += ' '+TW+' '+GW+'이 '+areaJoin(chungs)+' 자리와 <b>충(沖)</b>을 이루니, 그 자리는 변동·이동수가 있어 큰 결정은 한 박자 늦추는 편이 좋습니다.';
+    if (!haps.length && !chungs.length) hc += ' '+TW+'은 내 사주와 크게 부딪히거나 얽히는 자리가 없어, 대체로 평온하게 흘러갑니다.';
+    // 12운성 레이어
+    var uns = ' '+TW+'의 기세를 12운성으로 보면 <b>'+un+'</b>의 자리입니다 — '+(UNS_TXT[un]||'');
+    // 대운·세운 배경 레이어(생애 시점)
+    var flow = '';
+    if (dwP || yg) {
+      flow = ' 큰 흐름으로 보면';
+      if (dwP) flow += ' 지금은 '+dwGrade(dwFav)+' <b>'+GAN[dwP.s]+JI[dwP.b]+'</b> 대운('+sipsin(s.ds,dwP.s)+'·'+sipsin(s.ds,JIBON[dwP.b])+') 한가운데이고,';
+      if (yg) flow += ' 올해 '+GAN[yg.ys]+JI[yg.yb]+'년은 '+dwGrade(seFav)+' 세운입니다.';
+      flow += ' 그 바탕 위에서 '+TW+'의 기운이 얹혀 움직입니다.';
+    }
+
+    var total = base.t + yong + hc + uns + flow;
+    // 재물
+    var money = base.m + (tSum>=1 ? ' '+TW+'은 흐름이 받쳐 주니, 좋은 기회는 놓치지 말고 적극 살펴도 좋습니다.'
+      : tSum<=-1 ? ' '+TW+'은 새는 곳을 막는 것이 곧 버는 것이니, 지출부터 찬찬히 점검하세요.' : '');
+    // 애정 (일지=배우자궁 합충)
+    var loveHap = haps.some(function(h){return h[0]==='일';}), loveChung = chungs.some(function(c){return c[0]==='일';});
+    var love = base.l + (loveHap ? ' 특히 '+TW+'은 배우자·연인 자리에 합이 들어, 관계가 부드러워지고 마음이 통하는 '+PW+'입니다.'
+      : loveChung ? ' 다만 배우자·연인 자리에 충이 드니, 예민한 말은 한 번 더 삼키는 것이 평화를 지킵니다.' : '');
+    // 건강 (운성)
+    var health = base.h + ((UN_BONUS[un]||0)<=-2 ? ' 기운이 가라앉는 때이니, '+TW+'은 무엇보다 쉼과 회복을 앞세우세요.'
+      : (UN_BONUS[un]||0)>=3 ? ' 기세가 오르는 '+PW+'이라 활동에는 좋지만, 과욕과 무리는 금물입니다.' : '');
+    // 조언 (신강약 + 용신 + 합충 + 대운)
+    var advice = (ysn.strong ? '기운이 강한 사주라, '+TW+'도 덜어 쓰는 것 — 움직이고 표현하고 베푸는 것이 약이 됩니다.'
+        : '기운이 여린 사주라, '+TW+'은 채우는 것 — 충분한 쉼과 배움, 귀인의 도움이 약이 됩니다.')
+      + (tSum>=0.5 ? ' 마침 '+TW+' 기운이 받쳐 주니, 미뤄 둔 일을 밀어붙이기에 좋은 때입니다.'
+        : tSum<0 ? ' '+TW+'은 흐름이 살짝 거스르니, 욕심을 내기보다 다음을 준비하는 시기로 삼으세요.'
+        : ' 큰 무리 없이 평소의 리듬을 지키는 것이 최선입니다.')
+      + (chungs.length ? ' 충이 든 자리는 특히 서두르지 마세요.'
+        : haps.length ? ' 합이 든 자리의 인연은 반갑게 맞으세요.' : '')
+      + (dwFav<=-2 ? ' 지금 대운이 역풍인 시기라, 무리한 확장보다 내실을 다지는 편이 이롭습니다.'
+        : dwFav>=2 ? ' 지금 대운이 순풍인 시기라, 큰 그림을 그리고 실행에 옮기기 좋습니다.' : '');
+
+    var mn = cnt.indexOf(Math.min.apply(null, cnt));
+    return { score: sc, tsn: tsn, tbr: tbr, un: un, tSum: tSum, dwFav: dwFav, seFav: seFav,
+      haps: haps.length, chungs: chungs.length,
+      total: total, money: money, love: love, health: health, advice: advice,
+      lucky: { color: LUCKY[mn][0], num: LUCKY[mn][1], dir: LUCKY[mn][2] } };
+  }
+
+  function today(s, ysn, cnt, dateObj, ctx){
+    var t = dateObj || new Date();
+    var tgz = dayGZ(t.getFullYear(), t.getMonth()+1, t.getDate()), tsn = tgz%10, tbr = tgz%12;
+    var rel = sipsin(s.ds, tsn), base = TODAY_TXT[rel];
+    var r = core(s, ysn, cnt, tsn, tbr, base, ctx, t.getFullYear(), 'day');
+    r.rel = rel; r.theme = THEME[rel];
+    r.iljin = GAN[tsn]+JI[tbr]+'('+GANHJ[tsn]+JIHJ[tbr]+')일';
+    r.relLabel = '나에게 '+rel+' — '+THEME[rel]+'의 날';
+    r.date = t.getFullYear()+'.'+(t.getMonth()+1)+'.'+t.getDate();
+    r.signals = { tSum: Math.round(r.tSum*100)/100, un: r.un, haps: r.haps, chungs: r.chungs, dwFav: r.dwFav, seFav: r.seFav };
+    return r;
+  }
+
+  function month(s, ysn, cnt, dateObj, ctx){
+    var t = dateObj || new Date();
+    var mp = calcSaju(t.getFullYear(), t.getMonth()+1, t.getDate(), 12, 0, true, false);
+    var msn = mp.ms, mbr = mp.mb, rel = sipsin(s.ds, msn);
+    var base = { sc: TODAY_TXT[rel].sc, t: MON_TXT[rel], m: TODAY_TXT[rel].m, l: TODAY_TXT[rel].l, h: TODAY_TXT[rel].h };
+    var r = core(s, ysn, cnt, msn, mbr, base, ctx, t.getFullYear(), 'month');
+    r.rel = rel; r.theme = THEME[rel];
+    r.wolgeon = GAN[msn]+JI[mbr]+'('+GANHJ[msn]+JIHJ[mbr]+')월';
+    r.title = '이번 달 ('+GAN[msn]+JI[mbr]+'월) — 나에게 '+rel+'('+THEME[rel]+')의 달';
+    return r;
+  }
+
+  function week(s, ysn, cnt, dateObj, ctx){
+    var t = dateObj || new Date();
+    var day = t.getDay(), mon = new Date(t); mon.setDate(t.getDate()-((day+6)%7));
+    var names = ['월','화','수','목','금','토','일'], out = [];
+    for (var i=0;i<7;i++){ var d2 = new Date(mon); d2.setDate(mon.getDate()+i);
+      var r = today(s, ysn, cnt, d2, ctx);
+      out.push({ dow: names[i], score: r.score, iljin: r.iljin, rel: r.rel,
+        date: d2.getFullYear()+'.'+(d2.getMonth()+1)+'.'+d2.getDate(), total: r.total, advice: r.advice });
+    }
+    return out;
+  }
+
+  root.TodayLuck = { today: today, month: month, week: week, _THEME: THEME };
+})(typeof window !== 'undefined' ? window : this);
+</script>
+<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-07-21 r20</b> · 오늘의 운세 다축 동적 엔진(십신·합충·용신·12운성·신강약) · 서양 점성술 · 궁합 · 토정 6,480구 · 전 항목 동적</div>
 <!-- 사주 ✦ 운세 모바일 v1.0-r2 · 한지와 쪽빛 · 엔진 v2.1 + 자미두수·육효·하락이수·타로 · 2026-07-06 -->
 <script>
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
@@ -4962,5 +6008,41 @@ else try{enforce();}catch(e){}
     </div>
   </div>
 </div>
+<script>
+/* ============ 보강 1종 (바이오리듬) v1.0 — 2026-07-21 ============
+   원칙: PROTECTED(calcSaju·daewoon·dwRate·sipsin·yongsin·yearGZ) 계산식 불접촉·입력만 사용.
+   무저장·결정론(같은 사주=동일 출력, 날짜 기반은 같은 날 동일). 재사용 전역만 참조. */
+(function(){
+ // ── ② 바이오리듬 ──
+ window.bioRhythm=function(){
+  if(!cur){ alert("홈에서 사주를 먼저 조회해 주세요."); return; }
+  var t=new Date(), b=new Date(cur.y,cur.m-1,cur.d);
+  var D=Math.round((Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())-Date.UTC(cur.y,cur.m-1,cur.d))/86400000);
+  if(D<0){ alert("생년월일을 확인해 주세요."); return; }
+  var PI=Math.PI, cyc=[["신체","23","#b03a2e"],["감성","28","#2a5b8c"],["지성","33","#2e7d5b"]];
+  function v(p,d){ return Math.sin(2*PI*d/p); }
+  var W=300,H=120,mid=H/2,span=15,px=W/(span*2);
+  var lines=cyc.map(function(c){ var p=+c[1],pts=[];
+    for(var k=-span;k<=span;k++){ var x=(k+span)*px, y=mid-v(p,D+k)*(mid-8); pts.push(x.toFixed(1)+","+y.toFixed(1)); }
+    return '<polyline fill="none" stroke="'+c[2]+'" stroke-width="2" points="'+pts.join(" ")+'"/>'; }).join("");
+  var todayVals=cyc.map(function(c){ var val=Math.round(v(+c[1],D)*100);
+    var st=val>=60?"최고조":val>=20?"상승":val>-20?"평이":val>-60?"저조":"휴식기";
+    return {nm:c[0],val:val,st:st,col:c[2]}; });
+  var advBad=todayVals.filter(function(x){return x.val<=-60;}), advTop=todayVals.filter(function(x){return x.val>=60;});
+  var adv=advTop.length?(advTop.map(function(x){return x.nm;}).join("·")+" 기운이 최고조입니다. 중요한 일을 이 리듬에 맞추세요."):
+          advBad.length?(advBad.map(function(x){return x.nm;}).join("·")+" 리듬이 낮은 휴식기입니다. 무리하지 말고 컨디션을 아끼세요."):
+          "세 리듬이 대체로 평이합니다. 평소 페이스를 유지하기 좋은 날입니다.";
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:340px;display:block;margin:8px auto">'
+   +'<line x1="0" y1="'+mid+'" x2="'+W+'" y2="'+mid+'" stroke="#ddd" stroke-width="1"/>'
+   +'<line x1="'+(span*px)+'" y1="0" x2="'+(span*px)+'" y2="'+H+'" stroke="#c99a2e" stroke-width="1.5" stroke-dasharray="3 3"/>'
+   +lines+'<text x="'+(span*px+3)+'" y="12" font-size="10" fill="#c99a2e">오늘</text></svg>';
+  var cards=todayVals.map(function(x){ return '<div style="flex:1;text-align:center;border:1px solid var(--line,#e6ddcd);border-radius:8px;padding:8px 4px"><div style="font-size:12px;color:var(--sub)">'+x.nm+'</div><div style="font-size:20px;font-weight:800;color:'+x.col+'">'+(x.val>0?"+":"")+x.val+'%</div><div style="font-size:11px;color:var(--sub)">'+x.st+'</div></div>'; }).join("");
+  var box=el("brResult");
+  box.innerHTML='<div class="sec" style="margin-top:12px"><div style="display:flex;gap:6px">'+cards+'</div>'+svg
+   +'<p style="margin:4px 0 0">'+adv+'</p><p class="note">생후 '+D.toLocaleString()+'일째 · 신체 23일·감성 28일·지성 33일 주기(가운데 점선=오늘).</p></div>';
+  box.style.display="block";
+ };
+})();
+</script>
 </body>
 </html>
