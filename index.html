@@ -111,7 +111,7 @@ table.msk td{padding:4px 2px}
 .pchip{background:var(--card2);border:1px solid var(--line);border-radius:20px;
   padding:8px 14px;font-size:14px;cursor:pointer}
 .pchip:active{border-color:var(--gold)}
-.pchip .x{color:var(--red);margin-left:6px}
+.pchip .x{color:var(--red,#b3412f);margin-left:8px;font-size:16px;font-weight:700;padding:0 4px}
 /* 메뉴 */
 .menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .menu div{background:var(--card2);border-radius:12px;padding:12px 4px;text-align:center;font-size:13px}
@@ -331,8 +331,10 @@ body{padding-bottom:92px}
   </div>
   <div id="inPanel" style="display:none">
 <div class="card" id="profCard" style="display:none">
-  <h2>가족 프로필</h2>
+  <h2>저장된 사주</h2>
   <div class="plist" id="plist"></div>
+  <p class="note" id="profNote" style="margin:8px 0 0"></p>
+  <button class="btn2" id="profForget" onclick="profForgetAll()" style="display:none;margin-top:8px">저장된 사주 모두 지우기</button>
 </div>
 <div class="card open" id="inCard">
   <h2>사주 정보 입력</h2>
@@ -4422,15 +4424,34 @@ function makeName(){
     warn:(loose?"※ "+fixWhy+"흉수 최소 차선 조합입니다 — 수리 근거에서 흉수 위치를 확인하세요.":relaxed?"※ 4격 모두 길수인 조합이 없어 '3격 길·흉 없음' 기준으로 완화해 탐색했습니다.":"")};
     mkRenderPages(1); }catch(e){ if(window.console)console.log("mkPages:",e); }
 }
-/* ============ 현재 세션 프로필 (새로고침 시 폐기) ============ */
-var SESSION_PROFILES=[];
+/* ============ 사주 프로필 보관 (v28 · 이용자가 동의한 경우에만 이 기기에 저장) ============
+   동의 없으면 화면에서만 보관하고 새로고침 시 사라진다. 서버 전송 없음. 점술 질문·결과는 저장하지 않는다. */
+function profStoreRead(){ try{ var t=localStorage.getItem("saju_profiles"); if(!t)return null;
+  var a=JSON.parse(t); return (a&&a.length!==undefined)?a:null; }catch(e){ return null; } }
+function profStoreWrite(a){ try{ localStorage.setItem("saju_profiles",JSON.stringify(a)); return true; }catch(e){ return false; } }
+function profStoreClear(){ try{ localStorage.removeItem("saju_profiles"); }catch(e){} }
+var PROF_KEEP=(profStoreRead()!==null);          /* 이미 저장을 선택한 이용자 */
+var SESSION_PROFILES=profStoreRead()||[];
 function getProfiles(){ return SESSION_PROFILES.slice(); }
-function setProfiles(p){ SESSION_PROFILES=p.slice(); }
+function setProfiles(p){ SESSION_PROFILES=p.slice();
+  if(PROF_KEEP){ if(SESSION_PROFILES.length) profStoreWrite(SESSION_PROFILES); else profStoreClear(); } }
+function profForgetAll(){
+  if(!confirm("이 기기에 저장된 사주를 모두 지울까요?\n\n지운 뒤에는 다음에 열 때 다시 입력하셔야 합니다."))return;
+  SESSION_PROFILES=[]; PROF_KEEP=false; profStoreClear(); drawProfiles(); alert("저장된 사주를 모두 지웠습니다.");
+}
 function saveProfile(){
   if(!cur) return;
+  if(!PROF_KEEP){
+    PROF_KEEP=confirm("이 사주를 이 기기에 저장할까요?\n\n"
+      +"· 이름과 생년월일시가 이 기기 안에만 저장됩니다(서버로 보내지 않습니다)\n"
+      +"· 다음에 열 때 다시 입력하지 않아도 됩니다\n"
+      +"· 언제든 프로필 옆 ✕ 또는 [저장된 사주 모두 지우기]로 삭제할 수 있습니다\n\n"
+      +"[취소]를 누르면 이번 화면에서만 보관합니다.");
+  }
   var p=getProfiles();
   p=p.filter(function(x){return x.name!==cur.name;}); p.push(cur); setProfiles(p); drawProfiles();
-  alert("'"+cur.name+"' 프로필을 현재 화면에만 보관했습니다. 새로고침하면 삭제됩니다.");
+  alert(PROF_KEEP ? "'"+cur.name+"' 사주를 이 기기에 저장했습니다. 다음에 열면 바로 나옵니다."
+                  : "'"+cur.name+"' 사주를 이번 화면에서만 보관했습니다. 새로고침하면 사라집니다.");
 }
 function loadProfile(i){
   var p=getProfiles()[i]; if(!p) return;
@@ -4450,8 +4471,13 @@ function drawProfiles(){
   if(p.length===0){ c.style.display="none"; return; }
   c.style.display="block";
   el("plist").innerHTML=p.map(function(x,i){
-    return '<div class="pchip" onclick="loadProfile('+i+')">'+x.name+' <span class="x" onclick="delProfile('+i+',event)">✕</span></div>';
+    return '<div class="pchip" onclick="loadProfile('+i+')">'+x.name+' <span class="x" title="삭제" onclick="delProfile('+i+',event)">✕</span></div>';
   }).join("");
+  var nt=el("profNote"), fg=el("profForget");
+  if(nt) nt.textContent=PROF_KEEP
+    ? "이 기기에만 저장되어 있습니다(서버로 보내지 않습니다). 이름 옆 ✕ 를 누르면 하나씩 지웁니다."
+    : "이번 화면에서만 보관 중입니다 — 새로고침하면 사라집니다. 저장하려면 아래 저장 버튼을 누르세요.";
+  if(fg) fg.style.display=PROF_KEEP?"block":"none";
 }
 drawProfiles();
 /* (구 홈 타일 내비게이션 제거 — 모바일 셸 하단 탭으로 대체) */
@@ -6961,7 +6987,7 @@ var COMMERCE_INFO = {
   h += sec("1. 이 서비스의 성격",
     "이 프로그램이 보여 주는 내용은 전통 명리·역법·점술 이론에 따라 <b>계산한 해석</b>입니다. "
     + "과학적으로 검증된 예측이 아니며, 앞으로 일어날 일을 알려 주지 않습니다.<br>"
-    + "<b>오락과 자기 이해를 위한 참고용</b>으로만 이용해 주세요. 모든 풀이는 계산된 경향을 생활 언어로 옮긴 참고이며 사건의 발생·성패나 실제 결과를 예측·보장하지 않습니다. 입력 내용은 저장·수집·전송되지 않습니다. "
+    + "<b>오락과 자기 이해를 위한 참고용</b>으로만 이용해 주세요. 모든 풀이는 계산된 경향을 생활 언어로 옮긴 참고이며 사건의 발생·성패나 실제 결과를 예측·보장하지 않습니다. 입력 내용은 <b>서버로 전송되지 않으며</b>, 저장을 직접 선택하신 경우에만 이 기기 안에 남습니다. "
     + "의료·법률·재무·투자·진로처럼 되돌리기 어려운 결정의 근거로 삼지 마세요.<br>"
     + "이 프로그램은 <b>적중률이나 정확도를 표시하지도, 보장하지도 않습니다.</b> "
     + "같은 정보를 넣으면 늘 같은 결과가 나오는 계산 프로그램입니다(타로·주역의 뽑기 절차만 예외).");
@@ -6976,11 +7002,13 @@ var COMMERCE_INFO = {
 
   h += sec("3. 개인정보",
     "생년월일·태어난 시간·출생지·이름·질문 등 입력하신 내용은 "
-    + "<b>이 기기의 브라우저 안에서만</b> 계산에 쓰입니다. 서버로 보내지 않고, 저장하지도 않습니다."
+    + "<b>이 기기의 브라우저 안에서만</b> 계산에 쓰입니다. 서버로 보내지 않습니다. 기본적으로 저장하지 않으며, <b>[이 사주를 저장하시겠습니까?]에서 동의하신 경우에만</b> 이름·생년월일시가 이 기기에 보관됩니다."
     + '<details style="margin-top:6px"><summary style="cursor:pointer;color:var(--gold)">처리 방식 자세히 보기</summary><div style="margin-top:6px">'
-    + "기기에 남기는 것은 <b>잠금 해제 여부 한 가지</b>뿐입니다 — 처음 한 번만 암호를 묻기 위한 표시이며, 점술 입력값과는 관계가 없습니다.<br>"
-    + "점술 입력값에는 localStorage·sessionStorage·IndexedDB·쿠키를 <b>사용하지 않습니다.</b> "
-    + "화면을 새로 고치면 입력값은 사라집니다.<br>" + "호스팅 서버의 표준 접속 기록은 GitHub 정책을 따릅니다.<br>"
+    + "기기에 남는 것은 <b>두 가지</b>뿐입니다 — ①잠금 해제 여부(처음 한 번만 암호를 묻기 위한 표시) "
+    + "②<b>이용자가 저장에 동의한 사주</b>(이름·생년월일시·성별). 저장한 사주는 [저장된 사주] 칸의 ✕ 또는 "
+    + "[저장된 사주 모두 지우기]로 언제든 삭제할 수 있고, 삭제하면 이 기기에서 완전히 사라집니다.<br>"
+    + "질문·점괘·해석 결과와 그 밖의 입력값은 <b>저장하지 않습니다.</b> 저장에 동의하지 않으셨다면 "
+    + "화면을 새로 고칠 때 입력값이 사라집니다. 저장에는 이 기기의 localStorage만 쓰며, 쿠키·IndexedDB·sessionStorage는 쓰지 않습니다.<br>" + "호스팅 서버의 표준 접속 기록은 GitHub 정책을 따릅니다.<br>"
     + "광고·분석·추적 스크립트를 넣지 않았고, <b>외부 서버로 나가는 요청이 없습니다.</b> "
     + "웹폰트도 외부에서 불러오지 않습니다.<br>"
     + "다만 이 프로그램이 웹으로 제공되는 경우, 접속 기록은 <b>호스팅 사업자</b>가 처리할 수 있습니다. "
@@ -7098,7 +7126,7 @@ var COMMERCE_INFO = {
   if (box) box.innerHTML = h;
 })();
 </script>
-<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-20 v27</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
+<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-20 v28</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
 <!-- 사주 ✦ 운세 모바일 v1.0-r2 · 한지와 쪽빛 · 엔진 v2.1 + 자미두수·육효·하락이수·타로 · 2026-07-06 -->
 <script>
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
