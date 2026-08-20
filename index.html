@@ -5474,7 +5474,12 @@ function lockTry(){
   else{ lkWait=Date.now()+1500; el("lockIn").value=""; el("lockMsg").textContent="암호가 맞지 않습니다."; }
 }
 function lkSaveUnlock(){ try{ localStorage.setItem("saju_unlock","1"); }catch(e){} }
-function lkIsUnlocked(){ try{ return localStorage.getItem("saju_unlock")==="1"; }catch(e){ return false; } }
+function lkIsUnlocked(){ try{
+  if(localStorage.getItem("saju_unlock")==="1") return true;
+  /* v24까지 쓰던 구 키 — 이미 설치한 분이 암호를 다시 넣지 않도록 승계한다(2026-08-20 마스터님 지적) */
+  if(localStorage.getItem("sajuLockOK")==="1"){ lkSaveUnlock(); try{ localStorage.removeItem("sajuLockOK"); }catch(e2){} return true; }
+  return false;
+}catch(e){ return false; } }
 (function(){
   if(!lkIsUnlocked()) lockShow();
   var li=el("lockIn"); if(li) li.addEventListener("keydown",function(e){ if(e.key==="Enter") lockTry(); });
@@ -7086,7 +7091,7 @@ var COMMERCE_INFO = {
   if (box) box.innerHTML = h;
 })();
 </script>
-<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-19 v25</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
+<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-20 v26</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
 <!-- 사주 ✦ 운세 모바일 v1.0-r2 · 한지와 쪽빛 · 엔진 v2.1 + 자미두수·육효·하락이수·타로 · 2026-07-06 -->
 <script>
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
