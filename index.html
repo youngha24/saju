@@ -5474,6 +5474,13 @@ function lockTry(){
   else{ lkWait=Date.now()+1500; el("lockIn").value=""; el("lockMsg").textContent="암호가 맞지 않습니다."; }
 }
 function lkSaveUnlock(){ try{ localStorage.setItem("saju_unlock","1"); }catch(e){} }
+/* v24까지 기기에 남던 구 저장 데이터 정리 — 현재 판은 읽지도 쓰지도 않으므로 남은 값을 지운다(2026-08-20 마스터님 지시).
+   대상: 가족 프로필(개인정보) · 큰글씨 설정 · 폐지된 학습 원장 — 키 이름은 아래 removeItem 호출에 있다 */
+(function(){
+  try{ localStorage.removeItem("sajuProfiles"); }catch(e){}
+  try{ localStorage.removeItem("sajuBig"); }catch(e){}
+  try{ localStorage.removeItem("sajuSelfLearn_v1"); }catch(e){}
+})();
 function lkIsUnlocked(){ try{
   if(localStorage.getItem("saju_unlock")==="1") return true;
   /* v24까지 쓰던 구 키 — 이미 설치한 분이 암호를 다시 넣지 않도록 승계한다(2026-08-20 마스터님 지적) */
@@ -7091,7 +7098,7 @@ var COMMERCE_INFO = {
   if (box) box.innerHTML = h;
 })();
 </script>
-<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-20 v26</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
+<div style="text-align:center;color:var(--sub);font-size:11px;margin:16px 0 22px;opacity:.75">사주 ✦ 운세 · 빌드 <b>2026-08-20 v27</b> · 십신·12운성 3단 병기 · 날짜별 해석 초점 · 전 항목 동적</div>
 <!-- 사주 ✦ 운세 모바일 v1.0-r2 · 한지와 쪽빛 · 엔진 v2.1 + 자미두수·육효·하락이수·타로 · 2026-07-06 -->
 <script>
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
