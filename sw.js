@@ -1,5 +1,5 @@
 /* 사주 ✦ 운세 — 오프라인 캐시 서비스워커 v2.9 (2026-08-18 · 바이오 가중치 20·20·20·10x4 확정 r49) */
-var CACHE="saju-v28";
+var CACHE="saju-v29";
 var ASSETS=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-180.png"];
 self.addEventListener("install",function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ASSETS);}).then(function(){return self.skipWaiting();}));
