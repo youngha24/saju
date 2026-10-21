@@ -315,6 +315,9 @@ body{padding-bottom:92px}
   <button onclick="lockTry()" style="width:min(320px,86vw)">잠금 해제</button>
   <div id="lockMsg" style="font-size:13px;color:var(--red,#b3412f);min-height:18px"></div>
 </div>
+<script>/* 잠금 먼저 판단 — 뒤 스크립트에 오류가 나도 잠금이 생략되지 않게 */
+(function(){ var ok=false; try{ ok=localStorage.getItem("saju_unlock")==="1"||localStorage.getItem("sajuLockOK")==="1"; }catch(e){}
+  if(!ok) document.getElementById("lockScr").style.display="flex"; })();</script>
 <div class="topbar"><span class="brand">사주 ✦ 운세<span class="vbadge">v1.0</span></span><button id="bigBtn" onclick="toggleBig()">가A 큰글씨</button></div>
 
 <div class="tpage" id="pg-home">
@@ -339,7 +342,7 @@ body{padding-bottom:92px}
 <div class="card open" id="inCard">
   <h2>사주 정보 입력</h2>
   <label>이름</label>
-  <input id="inName" placeholder="예: 홍길동">
+  <input id="inName" maxlength="20" placeholder="예: 홍길동">
   <div class="row">
     <div><label>성별</label>
       <select id="inGender"><option value="M">남자</option><option value="F">여자</option></select></div>
@@ -354,9 +357,9 @@ body{padding-bottom:92px}
     <div><label>일</label><select id="inD"></select></div>
   </div>
   <div class="row">
-    <div><label>태어난 시 (2시간 단위)</label><select id="inH"></select></div>
+    <div><label>태어난 시</label><select id="inH"></select></div>
+    <div><label>분</label><select id="inMin"></select></div>
   </div>
-  <input id="inMin" type="hidden" value="0">
   <div class="chk"><input type="checkbox" id="inUnk"><span>태어난 시간을 모릅니다</span></div>
   <div class="chk"><input type="checkbox" id="inTst" checked><span>진태양시 보정 (-30분, 한국 출생 권장)</span></div>
   <button onclick="homeRun()">입력 확인 · 오늘의 운세 열기</button>
@@ -415,7 +418,7 @@ body{padding-bottom:92px}
   </div>
   <div class="card fold">
     <h2>타로카드 (켈틱 크로스 10장)</h2>
-    <p class="note" style="margin-top:0">원리 — 20세기 초 영국에서 간행되어 <b>저작권 보호기간이 끝난 고전 타로 78장 전부</b>를 씁니다. 인생의 큰 장면을 담은 메이저 아르카나 22장과, 일상의 자세한 사정을 담은 마이너 아르카나 56장(완드=일·열정, 컵=마음·관계, 소드=생각·갈등, 펜타클=돈·현실)입니다. 질문을 하나 정하고 <b>1장 → 3장 → 5장 → 7장 → 10장</b> 순서로 카드를 쌓아 가세요. 펼칠수록 풀이가 깊어지고(5장부터 심층해석), 10장을 모두 펼치면 서양 정통 배열인 <b>켈틱 크로스</b>가 완성되어 종합 결론이 나옵니다. 거꾸로 나온 카드(역방향)는 그 기운이 막혔거나 숨은 상태로 풀이합니다.</p>
+    <p class="note" style="margin-top:0">원리 — 20세기 초 영국에서 간행된 <b>고전 타로의 78장 구성</b>을 따릅니다. 카드 그림은 저작권을 피하기 위해 <b>AI 로 새로 그린 창작 그림</b>입니다. 인생의 큰 장면을 담은 메이저 아르카나 22장과, 일상의 자세한 사정을 담은 마이너 아르카나 56장(완드=일·열정, 컵=마음·관계, 소드=생각·갈등, 펜타클=돈·현실)입니다. 질문을 하나 정하고 <b>1장 → 3장 → 5장 → 7장 → 10장</b> 순서로 카드를 쌓아 가세요. 펼칠수록 풀이가 깊어지고(5장부터 심층해석), 10장을 모두 펼치면 서양 정통 배열인 <b>켈틱 크로스</b>가 완성되어 종합 결론이 나옵니다. 거꾸로 나온 카드(역방향)는 그 기운이 막혔거나 숨은 상태로 풀이합니다.</p>
     <label>질문 (선택)</label>
     <input id="trQ" placeholder="예: 지금 준비하는 일, 잘 풀릴까요?">
     <label>어느 자리에서 볼까요? (카테고리 렌즈)</label>
@@ -645,7 +648,7 @@ body{padding-bottom:92px}
   <div class="card" id="ghBcard">
     <h2>상대 정보 입력</h2>
     <label>이름(별칭)</label>
-    <input id="gpName" placeholder="예: 상대">
+    <input id="gpName" maxlength="20" placeholder="예: 상대">
     <div class="row">
       <div><label>성별</label>
         <select id="gpGender"><option value="F">여자</option><option value="M">남자</option></select></div>
@@ -660,7 +663,8 @@ body{padding-bottom:92px}
       <div><label>일</label><select id="gpD"></select></div>
     </div>
     <div class="row">
-      <div><label>태어난 시 (2시간 단위)</label><select id="gpH"></select></div>
+      <div><label>태어난 시</label><select id="gpH"></select></div>
+      <div><label>분</label><select id="gpMin"></select></div>
     </div>
     <div class="chk"><input type="checkbox" id="gpUnk"><span>태어난 시간을 모릅니다</span></div>
     <div class="chk"><input type="checkbox" id="gpTst" checked><span>진태양시 보정 (-30분, 한국 출생 권장)</span></div>
@@ -709,7 +713,7 @@ body{padding-bottom:92px}
   <div class="card" id="asBcard" style="display:none">
     <h2>상대 출생 정보</h2>
     <label>이름(별칭)</label>
-    <input id="bName" placeholder="예: 상대">
+    <input id="bName" maxlength="20" placeholder="예: 상대">
     <div class="row">
       <div><label>생년</label><select id="bY"></select></div>
       <div><label>월</label><select id="bMon"></select></div>
@@ -806,7 +810,7 @@ body{padding-bottom:92px}
 <div class="tpage" id="pg-personality">
   <div class="card">
     <h2>🧭 재미로 보는 성격유형 분석</h2>
-    <p class="note">자체 작성한 144문항으로 네 가지 연속 성향을 살펴봅니다. 공식 검사명·로고·문항을 복제하지 않았으며 4글자는 참고용 요약입니다.</p>
+    <p class="note">자체 작성한 144문항으로 네 가지 연속 성향을 살펴봅니다. 공식 검사명·로고·문항을 복제하지 않았으며 4글자는 참고용 요약입니다. MBTI® 등 상표 검사와 무관한 독자 검사로, 공인 심리검사가 아닙니다.</p>
     
   </div>
   <div class="card">
@@ -837,6 +841,12 @@ body{padding-bottom:92px}
   <button class="tb" id="tb-mk" onclick="showTab('mk')"><span class="ic">👶</span>작명</button>
 </nav>
 <script>
+/* ============ 공통 도우미 (2026-10-21 검토 반영) ============ */
+function realDate(y,m,d){ var t=new Date(y,m-1,d); return t.getFullYear()===y&&t.getMonth()===m-1&&t.getDate()===d; }
+/* 오늘 = 한국 날짜(폰 시간대가 해외여도 같은 날 운세) */
+function kstNow(){ var t=new Date(Date.now()+9*36e5); return new Date(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate(),t.getUTCHours(),t.getUTCMinutes()); }
+/* 이름·질문을 화면 HTML 에 넣기 전에 태그 문자를 뺀다(입력으로 코드가 실행되지 않게) */
+function cleanTxt(v,n){ return String(v==null?"":v).replace(/[<>&"'`]/g,"").slice(0,n||200); }
 /* ============ 만세력 계산 엔진 v0.1 ============ */
 var GAN=["갑","을","병","정","무","기","경","신","임","계"];
 var GANHJ=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
@@ -1153,22 +1163,21 @@ function appendReadingGuide(containerId,program,context){
   if(kid && (kid.textContent||"").trim()) host.appendChild(kid);
 }
 function run(scroll){
-  var name=el("inName").value.trim()||"이름없음";
+  var name=cleanTxt(el("inName").value.trim(),20)||"이름없음";
   var g=el("inGender").value;
   var y=+el("inY").value, m=+el("inM").value, d=+el("inD").value;
   var unk=el("inUnk").checked, tst=el("inTst").checked;
-  var h=+el("inH").value||0, mi=+el("inMin").value||0;
-  // 2시간 단위(십이지시) → 대표 시각 변환
-  var hBr=+el("inH").value; h=hBr*2; mi=0;
+  var h=+el("inH").value||0, mi=+el("inMin").value||0;   // 시·분 직접 입력(밤 11시대 = 다음날 자시는 calcSaju 가 처리)
   var cal=el("inCal")?el("inCal").value:"S";
   if(cal!=="S"){ // 음력 입력 → 양력 변환
-    if(y<1920||y>2050){ alert("음력 입력은 1920~2050년만 지원합니다."); return; }
+    if(y<1920||y>2050){ alert("음력 입력은 1920~2050년만 지원합니다."); return false; }
     var sv=lun2sol(y,m,d,cal==="LL");
-    if(!sv){ alert("음력 날짜를 확인해 주세요."); return; }
+    if(!sv){ alert("음력 날짜를 확인해 주세요."); return false; }
     y=sv[0]; m=sv[1]; d=sv[2];
   }
-  if(!y||!m||!d||y<1901||y>2099||m<1||m>12||d<1||d>31){ alert("생년월일을 확인해 주세요 (1901~2099년)."); return; }
-  if(!unk && (el("inH").value==="" || h<0||h>23||mi<0||mi>59)){ alert("태어난 시각을 확인하시거나 '시간을 모릅니다'에 체크해 주세요."); return; }
+  if(!y||!m||!d||y<1901||y>2099||m<1||m>12||d<1||d>31){ alert("생년월일을 확인해 주세요 (1901~2099년)."); return false; }
+  if(!realDate(y,m,d)){ alert("존재하지 않는 날짜입니다 ("+m+"월 "+d+"일). 날짜를 확인해 주세요."); return false; }
+  if(!unk && (el("inH").value==="" || h<0||h>23||mi<0||mi>59)){ alert("태어난 시각을 확인하시거나 '시간을 모릅니다'에 체크해 주세요."); return false; }
   cur={name:name,g:g,y:y,m:m,d:d,h:h,min:mi,unk:unk,tst:tst};
   var s=calcSaju(y,m,d,h,mi,unk,tst);
   render(s); if(scroll) el("result").scrollIntoView({behavior:"smooth"});
@@ -1255,7 +1264,7 @@ function render(s){
   // 대운 타임라인 + 올해 세운
   var rows2=dw.list.map(function(p){ var g2=dwRate(ysn,p,s.ds,s.mb,s), isNow=(age>=p.age&&age<p.age+10);
     return "<tr"+(isNow?" style='color:var(--gold)'":"")+"><td>"+p.age+"~"+(p.age+9)+"세"+(isNow?" ◀":"")+"</td><td>"+GAN[p.s]+JI[p.b]+"</td><td>"+sipsin(s.ds,p.s)+"·"+sipsin(s.ds,JIBON[p.b])+"</td><td style='text-align:left'>"+dwRateTxt(g2)+"</td></tr>"; }).join("");
-  var nowY=t0y(), yGz=MansaeCore.yearMonthPillar(MansaeCore.clockToJD(nowY,7,1,12,0));
+  var _kt=kstNow(), nowY=_kt.getFullYear(), yGz=MansaeCore.yearMonthPillar(MansaeCore.clockToJD(nowY,_kt.getMonth()+1,_kt.getDate(),12,0));   // 입춘 기준(연운 화면과 같게)
   var seA=sipsin(s.ds,yGz.ys), seB=sipsin(s.ds,JIBON[yGz.yb]), seG=dwRate(ysn,{s:yGz.ys,b:yGz.yb},s.ds,s.mb,s);
   st+='<div class="sec"><h3>대운 타임라인과 올해</h3>'
     +'<table class="ftable"><tr><th>나이</th><th>대운</th><th>십신</th><th style="text-align:left">흐름</th></tr>'+rows2+'</table>'
@@ -1263,7 +1272,7 @@ function render(s){
   st+=sajuChongpyeong(s,ysn,cnt,dw,age,yGz,seG);
   el("rStory").innerHTML=modernText(st);
   appendReadingGuide("rStory","saju",{evidence:["일간 "+GAN[s.ds],"월지 "+JI[s.mb],"용신 "+ELNM[ysn.el]],hasBirthTime:!cur.unk});
-function t0y(){ return (new Date()).getFullYear(); }
+function t0y(){ return kstNow().getFullYear(); }
   // 오늘의 운세 (다축 동적 엔진 — TodayLuck: 십신·합충·용신·12운성·신강약)
   var tl=TodayLuck.today(s,ysn,cnt,null,{g:cur.g,age:age,dw:dw});
   el("tTitle").textContent="오늘의 운세 ("+tl.date+")";
@@ -1699,7 +1708,7 @@ function showJY(){
   var tone=grade>=6?"흐름이 크게 열려 있는":grade>=5?"무리 없이 풀려가는":grade>=4?"신중하게 다루면 통하는":"한 번 브레이크를 밟아야 하는";
   var moveMsg=movs.length>0?('특히 지금은 「'+db[2]+'」에서 「'+dj[2]+'」'+(function(w){var c=w.charCodeAt(w.length-1)-0xAC00,j=(c>=0&&c<11172)?c%28:1;return(j===0||j===8)?'로':'으로';})(dj[2])+' 판이 넘어가는 길목이라 곧 상황이 한 번 바뀝니다. 그 변화를 거스르기보다 올라타는 편이 유리해요. '):
    '괘가 움직이지 않아 당분간은 지금 흐름이 이어집니다. 큰 변수 없이 흘러가니 기본에 충실하면 됩니다. ';
-  var q=el("jyQ").value.trim();
+  var q=cleanTxt(el("jyQ").value.trim(),200);
   var qContext=window.IChingDynamic.classifyQuestion(q);
   var linked=window.IChingDynamic.interpret(lines,moving,bon.no,q);
   el("jyDetail").innerHTML+="<div class='sec'><h3>본괘에서 지괘로</h3><p>"+linked.transition+"</p><p><b>실행 순서</b><br>"+linked.decisionSteps.map(function(step,index){return (index+1)+". "+step;}).join("<br>")+"</p></div>";
@@ -3033,7 +3042,7 @@ var YR_TXT={
 function yearLuck(){
   if(!cur){ alert("먼저 위에서 사주를 조회해 주세요."); return; }
   var s=calcSaju(cur.y,cur.m,cur.d,cur.h,cur.min,cur.unk,cur.tst);
-  var t=new Date();
+  var t=kstNow();
   var ts=calcSaju(t.getFullYear(),t.getMonth()+1,t.getDate(),12,0,true,false); // 입춘 기준 당년
   var rel=sipsin(s.ds,ts.ys);
   var y=YR_TXT[rel], sc=y[0];
@@ -3833,7 +3842,7 @@ var DM_PLACE=[
  [/회사|직장|사무실|학교/,"직장·학교는 사회적 자리 — 그곳의 일은 일·평판 영역으로 읽습니다"]];
 function dmNorm(w){ return w.replace(/(이가|에서|으로|에게|한테|이랑|하고|처럼|같이|들이|들을)$/,"").replace(/(이|가|을|를|은|는|의|와|과|로|에|도|만|랑|께|들)$/,""); }
 function dreamSearchLegacy(){
-  var q=el("dmQ").value.trim();
+  var q=cleanTxt(el("dmQ").value.trim(),2000);
   if(!q){ alert("꿈을 문장이나 단어로 적어 주세요 (예: 뱀이 마당으로 들어오는 꿈)"); return; }
   // ① 움직임·장소 먼저 추출 (문장 전체에서)
   var i,act=null,acts=[],places=[];
@@ -4427,7 +4436,8 @@ function makeName(){
 /* ============ 사주 프로필 보관 (v28 · 이용자가 동의한 경우에만 이 기기에 저장) ============
    동의 없으면 화면에서만 보관하고 새로고침 시 사라진다. 서버 전송 없음. 점술 질문·결과는 저장하지 않는다. */
 function profStoreRead(){ try{ var t=localStorage.getItem("saju_profiles"); if(!t)return null;
-  var a=JSON.parse(t); return (a&&a.length!==undefined)?a:null; }catch(e){ return null; } }
+  var a=JSON.parse(t); if(!Array.isArray(a)) return null;
+  return a.filter(function(x){ return x&&typeof x.name==="string"&&+x.y>0; }); }catch(e){ return null; } }
 function profStoreWrite(a){ try{ localStorage.setItem("saju_profiles",JSON.stringify(a)); return true; }catch(e){ return false; } }
 function profStoreClear(){ try{ localStorage.removeItem("saju_profiles"); }catch(e){} }
 var PROF_KEEP=(profStoreRead()!==null);          /* 이미 저장을 선택한 이용자 */
@@ -4457,8 +4467,7 @@ function loadProfile(i){
   var p=getProfiles()[i]; if(!p) return;
   el("inName").value=p.name; el("inGender").value=p.g;
   el("inY").value=p.y; el("inM").value=p.m; el("inD").value=p.d;
-  el("inH").value=Math.floor((((p.h||0)*60+(p.min||0)+60)%1440)/120); // 저장된 시각→십이지시
-  el("inMin").value=0;
+  el("inH").value=p.h||0; el("inMin").value=p.min||0; el("inCal").value="S";   // 저장값은 이미 양력 · 예전 판 저장분은 대표 시각이라 결과가 예전과 같다
   el("inUnk").checked=p.unk; el("inTst").checked=p.tst;
   run(false); homeInit();
 }
@@ -4471,7 +4480,7 @@ function drawProfiles(){
   if(p.length===0){ c.style.display="none"; return; }
   c.style.display="block";
   el("plist").innerHTML=p.map(function(x,i){
-    return '<div class="pchip" onclick="loadProfile('+i+')">'+x.name+' <span class="x" title="삭제" onclick="delProfile('+i+',event)">✕</span></div>';
+    return '<div class="pchip" onclick="loadProfile('+i+')">'+cleanTxt(x.name,20)+' <span class="x" title="삭제" onclick="delProfile('+i+',event)">✕</span></div>';
   }).join("");
   var nt=el("profNote"), fg=el("profForget");
   if(nt) nt.textContent=PROF_KEEP
@@ -4492,7 +4501,8 @@ drawProfiles();
   fill("inY",1920,2050,1960,function(i){return i+"년";});
   fill("inM",1,12,1,function(i){return i+"월";});
   fill("inD",1,31,1,function(i){return i+"일";});
-  fill("inH",0,11,6,function(i){return SIJIN[i];});
+  fill("inH",0,23,12,function(i){return i+"시 · "+SIJIN[Math.floor(((i+1)%24)/2)].split(" · ")[0];});
+  fill("inMin",0,59,0,function(i){return i+"분";});
 })();
 // 접기/펼치기: 뒤에서 생성되는 법적 고지 카드까지 한 번에 처리
 document.addEventListener("click",function(event){
@@ -4609,7 +4619,7 @@ function toggleInput(force){
   if(show) drawProfiles();
 }
 function homeRun(){
-  try{ run(false); }catch(e){ alert("입력 값을 다시 확인해 주세요."); return; }
+  try{ if(run(false)===false) return; }catch(e){ alert("입력 값을 다시 확인해 주세요."); return; }   // 입력 확인 안내는 한 번만
   var tw=el("tdWrap"); if(tw) tw.style.display="none";
   homeInit();
   el("svState").textContent=getProfiles().some(function(x){return x.name===cur.name;})?"✅ 이미 저장된 사주입니다":"";
@@ -4621,7 +4631,7 @@ function saveCur(){
 function sajuInit(){ var n=el("sjNeed"); if(n) n.style.display=cur?"none":"block"; }
 function unveil(){ var w=el("mskWrap"); if(w)w.classList.remove("veiled"); }
 var _run0=run;
-run=function(sc){ _run0(sc); var w=el("mskWrap"); if(w)w.classList.add("veiled"); };
+run=function(sc){ var r=_run0(sc); var w=el("mskWrap"); if(w)w.classList.add("veiled"); return r; };
 /* ============ 오행 상생·상극 도표 (SVG) ============ */
 function ohStarSVG(){
   var C=["#5E9A79","#C56B5B","#C39A54","#8B9099","#4E7CA6"], NM=["木","火","土","金","水"];
@@ -5062,7 +5072,7 @@ function renderTarot(prev){
   return '<div class="sec"><h3>'+(POS10[i]||("제"+(i+1)+"장"))+' — '+c[0]+' ('+c[1]+')'+(rev[i]?' · 역방향':'')+'</h3>'+
    '<p><span class="note">'+(LEAD10[i]||'')+'</span><br><b>'+base[0]+'</b>'+(base[1]?' — '+base[1]:'')+'.<br>'+
    catLine(c,rev[i])+deep+'</p></div>';}).join("");
- var cc=tState.cat||"all",q=el("trQ").value.trim(),nRev=rev.filter(Boolean).length;
+ var cc=tState.cat||"all",q=cleanTxt(el("trQ").value.trim(),200),nRev=rev.filter(Boolean).length;
  var kws=idx.map(function(ci,i){return ka(rev[i]?DECK[ci][4]:DECK[ci][3])[0];});
  var flow=n===1?'중심 기운은 「'+kws[0]+'」입니다. ':'뽑힌 자리를 이으면 「'+kws.join('」 → 「')+'」의 흐름입니다. ';
  var revMsg=nRev===0?"모든 카드가 바르게 나와 기운이 순방향입니다 — 마음먹은 대로 차근차근 진행하세요. ":
@@ -5488,7 +5498,7 @@ function nameReadPro(){
   appendProgramEvidence("nrResult","naming");
   el("nrResult").style.display="block";
 }
-/* ============ 설치 잠금 (11자리 · 해시 검증 — 원문 코드는 파일에 없음) ============ */
+/* ============ 설치 잠금 (10자리 · 해시 검증 — 원문 코드는 파일에 없음) ============ */
 var LK_SALT="5zh5yyiu", LK_HASH="1kx3w3l.1apfv82", LK_LEN=10, lkWait=0; // 암호 변경 시: 새 코드로 lkH(salt+code) 재계산해 교체 (보고서 r12 참조)
 function lkH(s){ var a=5381,b=0; for(var i=0;i<s.length;i++){ a=((a<<5)+a+s.charCodeAt(i))>>>0; b=(s.charCodeAt(i)+(b<<6)+(b<<16)-b)>>>0; } return a.toString(36)+"."+b.toString(36); }
 function lockShow(){ var l=el("lockScr"); if(!l) return; l.style.display="flex"; try{ el("lockIn").focus(); }catch(e){} }
@@ -5519,13 +5529,13 @@ function lkIsUnlocked(){ try{
 })();
 /* ============ 시작 ============ */
 (function(){
-  var t=new Date();
+  var t=kstNow();
   el("hmDate").textContent=t.getFullYear()+"년 "+(t.getMonth()+1)+"월 "+t.getDate()+"일 "+["일","월","화","수","목","금","토"][t.getDay()]+"요일";
   var p=getProfiles();
   if(p.length){ var x=p[0];
     el("inName").value=x.name; el("inGender").value=x.g;
     el("inY").value=x.y; el("inM").value=x.m; el("inD").value=x.d;
-    el("inH").value=Math.floor((((x.h||0)*60+(x.min||0)+60)%1440)/120); el("inMin").value=0;
+    el("inH").value=x.h||0; el("inMin").value=x.min||0; el("inCal").value="S";
     el("inUnk").checked=x.unk; el("inTst").checked=x.tst;
     try{ run(false); }catch(e){}
   }
@@ -5643,7 +5653,7 @@ var GH_SIJIN=["자시 · 밤 11시~새벽 1시","축시 · 새벽 1~3시","인�
 var _ghFilled=false;
 function ghFill(id,from,to,sel,fmt){ var o="",i; for(i=from;i<=to;i++){o+='<option value="'+i+'"'+(i===sel?' selected':'')+'>'+(fmt?fmt(i):i)+'</option>';} var e=el(id); if(e)e.innerHTML=o; }
 function gunghapInit(){
-  if(!_ghFilled){ ghFill("gpY",1920,2050,1990,function(i){return i+"년";}); ghFill("gpM",1,12,1,function(i){return i+"월";}); ghFill("gpD",1,31,1,function(i){return i+"일";}); ghFill("gpH",0,11,6,function(i){return GH_SIJIN[i];}); _ghFilled=true; }
+  if(!_ghFilled){ ghFill("gpY",1920,2050,1990,function(i){return i+"년";}); ghFill("gpM",1,12,1,function(i){return i+"월";}); ghFill("gpD",1,31,1,function(i){return i+"일";}); ghFill("gpH",0,23,12,function(i){return i+"시";}); ghFill("gpMin",0,59,0,function(i){return i+"분";}); _ghFilled=true; }
   var has=!!cur;
   if(el("ghNeed"))el("ghNeed").style.display=has?"none":"block";
   if(el("ghMe"))el("ghMe").style.display=has?"block":"none";
@@ -5653,13 +5663,14 @@ function gunghapInit(){
 }
 function gunghapRun(){
   if(!cur){ gunghapInit(); return; }
-  var bName=((el("gpName").value||"").trim())||"상대";
+  var bName=cleanTxt((el("gpName").value||"").trim(),20)||"상대";
   var by=+el("gpY").value, bm=+el("gpM").value, bd=+el("gpD").value;
   var bunk=el("gpUnk").checked, btst=el("gpTst").checked;
-  var bh=(+el("gpH").value)*2, bmin=0, bcal=el("gpCal").value;
+  var bh=+el("gpH").value||0, bmin=+el("gpMin").value||0, bcal=el("gpCal").value;
   if(bcal!=="S"){ if(by<1920||by>2050){alert("음력 입력은 1920~2050년만 지원합니다.");return;}
     var sv=lun2sol(by,bm,bd,bcal==="LL"); if(!sv){alert("상대의 음력 날짜를 확인해 주세요.");return;} by=sv[0];bm=sv[1];bd=sv[2]; }
   if(!by||!bm||!bd||by<1901||by>2099||bm<1||bm>12||bd<1||bd>31){ alert("상대의 생년월일을 확인해 주세요 (1901~2099년)."); return; }
+  if(!realDate(by,bm,bd)){ alert("상대의 날짜가 존재하지 않습니다 ("+bm+"월 "+bd+"일)."); return; }
   function ghCandidates(y,m,d,h,min,unknown,tst){
     if(!unknown)return [{s:calcSaju(y,m,d,h,min,false,tst),hour:h}];
     var out=[];for(var hour=0;hour<24;hour+=2)out.push({s:calcSaju(y,m,d,hour,0,false,tst),hour:hour});
@@ -5669,8 +5680,10 @@ function gunghapRun(){
   var bCandidates=ghCandidates(by,bm,bd,bh,bmin,bunk,btst),samples=[];
   aCandidates.forEach(function(a){bCandidates.forEach(function(b){
     var result=Gunghap.gunghap(Gunghap.fromSaju(a.s,yongsin(a.s)),Gunghap.fromSaju(b.s,yongsin(b.s)));
+    if(!result)return;
     samples.push({score:result.score,label:result.label,detail:{aHour:a.hour,bHour:b.hour,result:result}});
   });});
+  if(!samples.length){ alert("궁합을 계산하지 못했습니다. 입력을 확인해 주세요."); return; }
   var ensemble=Gunghap.summarizeSamples(samples);
   var representative=samples.slice().sort(function(a,b){return Math.abs(a.score-ensemble.median)-Math.abs(b.score-ensemble.median);})[0];
   var r=representative.detail.result,A=aCandidates[0].s,B=bCandidates[0].s;
@@ -6521,7 +6534,7 @@ function astroInit(){
   var has=!!cur;
   if(!_asFilled){
     asCityFill('myCity'); asCityFill('bCity');
-    asFill('myHour',0,23,(has&&cur.h!=null?cur.h:12),'시'); asFill('myMin',0,59,0,'분');
+    asFill('myHour',0,23,(has&&cur.h!=null?cur.h:12),'시'); asFill('myMin',0,59,(has&&cur.min!=null?cur.min:0),'분');
     asFill('bHour',0,23,12,'시'); asFill('bMin',0,59,0,'분');
     asFill('bY',1920,2050,1990,'년'); asFill('bMon',1,12,1,'월'); asFill('bD',1,31,1,'일');
     if(el('myCity'))el('myCity').value='0'; if(el('bCity'))el('bCity').value='0'; // 서울 기본
@@ -6546,7 +6559,8 @@ function astroSoloRun(){
   var loc=asGetLoc('myCity','myLat','myLon','myTz');
   if(!loc){ alert('출생 도시를 선택하거나 위·경도를 입력해 주세요.'); return; }
   var hour=+el('myHour').value, min=+el('myMin').value;
-  var N=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,hour,min,cur.unk,loc);
+  var N; try{ N=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,hour,min,cur.unk,loc); }
+  catch(e){ alert("그 시각은 서머타임 전환으로 시계에 없던 시각입니다. 1시간 뒤로 입력해 주세요."); return; }
   var now=new Date(),T=window.Astro.transits(N,now.getFullYear(),now.getMonth()+1,now.getDate());
   el('asResult').innerHTML=modernText(renderNatal(N,cur.name,T));
   el('asResult').style.display='block';
@@ -6562,8 +6576,9 @@ function astroSynRun(){
   if(!locB){ alert('상대의 출생 도시를 선택해 주세요.'); return; }
   var by=+el('bY').value, bm=+el('bMon').value, bd=+el('bD').value, bunk=el('bUnk').checked;
   if(!by||!bm||!bd){ alert('상대의 생년월일을 확인해 주세요.'); return; }
-  var bName=((el('bName').value||'').trim())||'상대';
-  var A=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,+el('myHour').value,+el('myMin').value,cur.unk,locA);
+  var bName=cleanTxt((el('bName').value||'').trim(),20)||'상대';
+  var A; try{ A=_astroFrom(cur.name,cur.g,cur.y,cur.m,cur.d,+el('myHour').value,+el('myMin').value,cur.unk,locA); }
+  catch(e){ alert("내 출생 시각이 서머타임 전환으로 시계에 없던 시각입니다. 1시간 뒤로 입력해 주세요."); return; }
   var B=_astroFrom(bName,'?',by,bm,bd,+el('bHour').value,+el('bMin').value,bunk,locB);
   var S=window.Astro.synastry(A,B,cur.name,bName);
   el('asResult').innerHTML=modernText(renderSyn(S,A,B,cur.name,bName));
@@ -6920,7 +6935,7 @@ function renderSyn(S,A,B,nameA,nameB){
   }
 
   function today(s, ysn, cnt, dateObj, ctx){
-    var t = dateObj || new Date();
+    var t = dateObj || kstNow();
     var tgz = dayGZ(t.getFullYear(), t.getMonth()+1, t.getDate()), tsn = tgz%10, tbr = tgz%12;
     var rel = sipsin(s.ds, tsn), base = TODAY_TXT[rel];
     var r = core(s, ysn, cnt, tsn, tbr, base, ctx, t.getFullYear(), 'day');
@@ -6933,7 +6948,7 @@ function renderSyn(S,A,B,nameA,nameB){
   }
 
   function month(s, ysn, cnt, dateObj, ctx){
-    var t = dateObj || new Date();
+    var t = dateObj || kstNow();
     var mp = calcSaju(t.getFullYear(), t.getMonth()+1, t.getDate(), 12, 0, true, false);
     var msn = mp.ms, mbr = mp.mb, rel = sipsin(s.ds, msn);
     var base = { sc: TODAY_TXT[rel].sc, t: MON_TXT[rel], m: TODAY_TXT[rel].m, l: TODAY_TXT[rel].l, h: TODAY_TXT[rel].h };
@@ -6945,7 +6960,7 @@ function renderSyn(S,A,B,nameA,nameB){
   }
 
   function week(s, ysn, cnt, dateObj, ctx){
-    var t = dateObj || new Date();
+    var t = dateObj || kstNow();
     var day = t.getDay(), mon = new Date(t); mon.setDate(t.getDate()-((day+6)%7));
     var names = ['월','화','수','목','금','토','일'], out = [];
     for (var i=0;i<7;i++){ var d2 = new Date(mon); d2.setDate(mon.getDate()+i);
@@ -7015,7 +7030,7 @@ var COMMERCE_INFO = {
     + "제공자는 그 기록에 접근하지 않습니다.</div></details>");
 
   h += sec("4. 자료의 출처와 이용 허락",
-    "타로 그림·해석문·작명 풀이는 <b>직접 제작·집필한 창작물</b>이고, 꿈 표제어와 한자 정보는 <b>공개 데이터</b>를 씁니다. 항목별 내용은 아래에서 펼쳐 보실 수 있습니다."
+    "타로 그림(AI 로 새로 그린 그림)·해석문·작명 풀이는 <b>직접 제작·집필한 창작물</b>이고, 꿈 표제어와 한자 정보는 <b>공개 데이터</b>를 씁니다. 항목별 내용은 아래에서 펼쳐 보실 수 있습니다."
     + '<details style="margin-top:6px"><summary style="cursor:pointer;color:var(--gold)">자료별 자세히 보기</summary><div style="margin-top:6px">'
     + "<b>꿈 표제어(영어)</b> — 20세기 초에 간행되어 보호기간이 끝난 해몽 원전에서 "
     + "<b>표제어 목록만</b> 추출했습니다. 그 책의 해석 문장은 싣지 않았습니다.<br><br>"
