@@ -361,7 +361,7 @@ body{padding-bottom:92px}
     <div><label>분</label><select id="inMin"></select></div>
   </div>
   <div class="chk"><input type="checkbox" id="inUnk"><span>태어난 시간을 모릅니다</span></div>
-  <div class="chk"><input type="checkbox" id="inTst" checked><span>진태양시 보정 (-30분, 한국 출생 권장)</span></div>
+  <div class="chk"><input type="checkbox" id="inTst" checked><span>진태양시 보정 (-32분, 한국 출생 권장)</span></div>
   <button onclick="homeRun()">입력 확인 · 오늘의 운세 열기</button>
   <button class="btn2" onclick="saveCur()">💾 이 사주를 저장하시겠습니까?</button>
   <p class="note" id="svState" style="margin-top:6px"></p>
@@ -667,7 +667,7 @@ body{padding-bottom:92px}
       <div><label>분</label><select id="gpMin"></select></div>
     </div>
     <div class="chk"><input type="checkbox" id="gpUnk"><span>태어난 시간을 모릅니다</span></div>
-    <div class="chk"><input type="checkbox" id="gpTst" checked><span>진태양시 보정 (-30분, 한국 출생 권장)</span></div>
+    <div class="chk"><input type="checkbox" id="gpTst" checked><span>진태양시 보정 (-32분, 한국 출생 권장)</span></div>
     <button onclick="gunghapRun()">💞 궁합 보기</button>
     <p class="note" style="margin-top:6px">※ 상대의 태어난 시간을 몰라도 계산됩니다(일지·연지·일간 중심). 음력·윤달도 자동 변환됩니다.</p>
   </div>
@@ -1034,14 +1034,15 @@ return {jdnInt:jdnInt,civilFromJDN:civilFromJDN,jdFromKST:jdFromKST,kstFromJD:ks
 /* ============ 만세력 코어 끝 ============ */
 
 /* 시간 보정: ①서머타임(일광절약시간) 실시 기간 -60분 (정부 공표 기간, 위키백과 '일광 절약 시간제' 표 기준)
-   ②표준 자오선: 1954-03-21~1961-08-09는 동경 127.5도(UTC+8:30) 사용기 → 진태양시 보정 -2분, 그 외 -30분 */
+   ②진태양시(서울 동경 126.98도 기준·균시차 미적용=국내 관행): UTC+9 기간 -32분,
+     UTC+8:30 사용기(1908-04-01~1911-12-31, 1954-03-21~1961-08-09) -2분 */
 var DST_KR=[[19480601,19480912],[19490403,19490910],[19500401,19500909],[19510506,19510908],
 [19550505,19550908],[19560520,19560929],[19570505,19570921],[19580504,19580920],
 [19590503,19590919],[19600501,19600917],[19870510,19871010],[19880508,19881008]];
 function timeCorr(y,m,d){
   var v=y*10000+m*100+d, c=0;
   for(var i=0;i<DST_KR.length;i++){ if(v>=DST_KR[i][0]&&v<=DST_KR[i][1]){ c+=60; break; } }
-  c+=(v>=19540321&&v<=19610809)?2:30;
+  c+=((v>=19080401&&v<=19111231)||(v>=19540321&&v<=19610809))?2:32;
   return c;
 }
 function calcSaju(y,m,d,h,min,unknownTime,tst,loc){
@@ -1068,7 +1069,7 @@ function calcSaju(y,m,d,h,min,unknownTime,tst,loc){
     dy=nx.getFullYear(); dm=nx.getMonth()+1; dd=nx.getDate(); }
   var dgz=dayGZ(dy,dm,dd), ds=dgz%10, db=dgz%12;
   // 연주·월주 (절입 '시각' 기준 — 만세력 코어 v1.0)
-  // 비교 기준은 출생 표준시 순간(서머타임·UTC+8:30기 자동 환산). 진태양시 -30분은 시주에만 적용.
+  // 비교 기준은 출생 표준시 순간(서머타임·UTC+8:30기 자동 환산). 진태양시 -32분(UTC+8:30기 -2분)은 시주에만 적용.
   // 시간 미상이면 정오(12:00)로 간주 — 절입 당일 출생은 시간 입력 권장.
   var bjd=globalLoc?astroChart.jd:MansaeCore.clockToJD(y,m,d, unknownTime?12:h, unknownTime?0:min);
   var ym=MansaeCore.yearMonthPillar(bjd);
@@ -4449,6 +4450,7 @@ function profForgetAll(){
   if(!confirm("이 기기에 저장된 사주를 모두 지울까요?\n\n지운 뒤에는 다음에 열 때 다시 입력하셔야 합니다."))return;
   SESSION_PROFILES=[]; PROF_KEEP=false; profStoreClear(); drawProfiles(); alert("저장된 사주를 모두 지웠습니다.");
 }
+function profName(c){ return c.name==="이름없음" ? "이름없음 ("+c.y+"."+c.m+"."+c.d+")" : c.name; }   // 이름 빈칸끼리 덮어쓰지 않게 생년월일로 구분
 function saveProfile(){
   if(!cur) return;
   if(!PROF_KEEP){
@@ -4458,10 +4460,13 @@ function saveProfile(){
       +"· 언제든 프로필 옆 ✕ 또는 [저장된 사주 모두 지우기]로 삭제할 수 있습니다\n\n"
       +"[취소]를 누르면 이번 화면에서만 보관합니다.");
   }
-  var p=getProfiles();
-  p=p.filter(function(x){return x.name!==cur.name;}); p.push(cur); setProfiles(p); drawProfiles();
-  alert(PROF_KEEP ? "'"+cur.name+"' 사주를 이 기기에 저장했습니다. 다음에 열면 바로 나옵니다."
-                  : "'"+cur.name+"' 사주를 이번 화면에서만 보관했습니다. 새로고침하면 사라집니다.");
+  var p=getProfiles(), bd=cur.y+"."+cur.m+"."+cur.d, rec=Object.assign({},cur,{name:profName(cur)});
+  var same=p.filter(function(x){return x.name===rec.name;})[0];
+  if(same && (same.y!==rec.y||same.m!==rec.m||same.d!==rec.d||(same.h||0)!==(rec.h||0)||(same.min||0)!==(rec.min||0)||same.unk!==rec.unk)
+     && !confirm("같은 이름의 사주를 새 생년월일로 바꿀까요?\n\n'"+rec.name+"' "+same.y+"."+same.m+"."+same.d+" → "+bd)) return;
+  p=p.filter(function(x){return x.name!==rec.name;}); p.push(rec); setProfiles(p); drawProfiles();
+  alert(PROF_KEEP ? "'"+rec.name+"' 사주를 이 기기에 저장했습니다. 다음에 열면 바로 나옵니다."
+                  : "'"+rec.name+"' 사주를 이번 화면에서만 보관했습니다. 새로고침하면 사라집니다.");
 }
 function loadProfile(i){
   var p=getProfiles()[i]; if(!p) return;
@@ -4622,7 +4627,7 @@ function homeRun(){
   try{ if(run(false)===false) return; }catch(e){ alert("입력 값을 다시 확인해 주세요."); return; }   // 입력 확인 안내는 한 번만
   var tw=el("tdWrap"); if(tw) tw.style.display="none";
   homeInit();
-  el("svState").textContent=getProfiles().some(function(x){return x.name===cur.name;})?"✅ 이미 저장된 사주입니다":"";
+  el("svState").textContent=getProfiles().some(function(x){return x.name===profName(cur);})?"✅ 이미 저장된 사주입니다":"";
 }
 function saveCur(){
   if(!cur){ try{ run(false); }catch(e){ alert("먼저 생년월일시를 입력해 주세요."); return; } }
@@ -5622,8 +5627,8 @@ function lkIsUnlocked(){ try{
   }
   function fromSaju(s,yon){
     var oh=[0,0,0,0,0];
-    [s.ys,s.ms,s.hs].forEach(function(x){if(x!=null)oh[GANEL[x]]++;});
-    [s.yb,s.db,s.hb].forEach(function(x){if(x!=null)oh[JIEL[x]]++;});
+    [s.ys,s.ms,s.ds,s.hs].forEach(function(x){if(x!=null)oh[GANEL[x]]++;});
+    [s.yb,s.mb,s.db,s.hb].forEach(function(x){if(x!=null)oh[JIEL[x]]++;});
     var buJok=0,mn=Infinity; for(var i=0;i<5;i++){if(oh[i]<mn){mn=oh[i];buJok=i;}}
     return {ilGan:s.ds,ilJi:s.db,yeonJi:s.yb,ohaeng:oh,buJok:buJok,yongsin:yon?yon.el:null};
   }
@@ -7145,7 +7150,7 @@ var COMMERCE_INFO = {
 <!-- 사주 ✦ 운세 모바일 v1.0-r2 · 한지와 쪽빛 · 엔진 v2.1 + 자미두수·육효·하락이수·타로 · 2026-07-06 -->
 <script>
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost")){
-  /* PWA 자동갱신 v1 — ① 주기적·복귀 시 업데이트 확인 ② 새 SW 활성화 시 1회 새로고침 */
+  /* PWA 자동갱신 v2 — ① 주기적·복귀 시 업데이트 확인 ② 새 SW 활성화 시 «새 버전» 띠 표시, 누를 때만 새로고침 */
   navigator.serviceWorker.register("./sw.js").then(function(reg){
     var upd=function(){ try{ reg.update(); }catch(e){} };
     setInterval(upd, 60*60*1000);                       // 1시간마다 확인
@@ -7155,8 +7160,13 @@ if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostn
   navigator.serviceWorker.addEventListener("controllerchange", function(){
     if(!_swHad){ _swHad=true; return; }                 // 최초 설치는 새로고침 불필요
     if(_swReloaded) return;
-    var _personalityBusy=Array.prototype.some.call(document.querySelectorAll("#personalityQuestions select"),function(s){return s.value!=="";});
-    _swReloaded=true; if(!_personalityBusy) location.reload();
+    _swReloaded=true;   // 즉시 새로고침하면 입력 중인 궁합·타로·미저장 사주가 사라진다 → 띠를 눌렀을 때만
+    var b=document.createElement("div");
+    b.textContent="새 버전이 있습니다 — 눌러서 새로고침";
+    b.setAttribute("role","button"); b.id="swUpdBar";
+    b.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:14px 16px;padding-bottom:calc(14px + env(safe-area-inset-bottom));background:#1f3a5f;color:#fff;text-align:center;font-size:15px;cursor:pointer;box-shadow:0 -2px 8px rgba(0,0,0,.25)";
+    b.onclick=function(){ location.reload(); };
+    document.body.appendChild(b);
   });
 }
 </script>
